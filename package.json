@@ -1,6 +1,6 @@
 {
   "name": "wrap-request",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a request wrapper for asynchronous operations powered by mobx",
   "main": "dist/index.js",
   "scripts": {
@@ -21,13 +21,16 @@
     "url": "https://github.com/misantronic/wrap-request/issues"
   },
   "homepage": "https://github.com/misantronic/wrap-request#readme",
+  "peerDependencies": {
+    "mobx": ">= 4.0.0"
+  },
   "dependencies": {
-    "mobx": ">= 4.0",
     "tslib": ">= 1.9.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.13",
     "jest": "^24.0.0",
+    "mobx": "^4.9.0",
     "ts-jest": "^23.10.5",
     "typescript": "^3.2.4"
   },
