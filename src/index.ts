@@ -143,9 +143,9 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         this._$ = value;
     }
 
-    public ifFetched<R = any>(cb: ($: T | X) => R) {
+    public ifFetched<R = any>(cb: ($: T) => R) {
         if (this.fetched) {
-            return cb(this.$);
+            return cb(this.$ as T);
         }
 
         return null;
