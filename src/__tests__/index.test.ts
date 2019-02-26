@@ -112,6 +112,18 @@ test('it should match error', async () => {
     ).toEqual('Error');
 });
 
+test('it should invoke ifFetched', async () => {
+    const wrap = wrapRequest(
+        () => new Promise(resolve => setTimeout(() => resolve(1337), 0))
+    );
+
+    await wrap.request();
+
+    const fetchedValue = wrap.ifFetched(val => `My val is ${val}`);
+
+    expect(fetchedValue).toEqual('My val is 1337');
+});
+
 test('it should transform data', async () => {
     const wrap = wrapRequest(
         () =>

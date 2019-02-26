@@ -35,6 +35,9 @@
     "typescript": "^3.2.4"
   },
   "jest": {
+    "testPathIgnorePatterns": [
+      "/dist/"
+    ],
     "watchPathIgnorePatterns": [
       "/dist/"
     ],
