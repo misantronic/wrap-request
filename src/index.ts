@@ -142,6 +142,14 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     public reset(value: T | X) {
         this._$ = value;
     }
+
+    public ifFetched<R = any>(cb: ($: T | X) => R) {
+        if (this.fetched) {
+            return cb(this.$);
+        }
+
+        return null;
+    }
 }
 
 export function wrapRequest<T = any, U = any, X = undefined>(
