@@ -22,6 +22,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
         error?(e: Error): any;
     }): any;
     reset(value: T | X): void;
+    ifFetched<R = any>(cb: ($: T | X) => R): R | null;
 }
 export declare function wrapRequest<T = any, U = any, X = undefined>(request: (params: U) => Promise<T>): WrapRequest<T, U, X>;
 export declare function wrapRequest<T = any, U = any, X = T>(request: (params: U) => Promise<T>, defaultData: T): WrapRequest<T, U, X>;

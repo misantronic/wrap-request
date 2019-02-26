@@ -96,6 +96,12 @@ class WrapRequest {
     reset(value) {
         this._$ = value;
     }
+    ifFetched(cb) {
+        if (this.fetched) {
+            return cb(this.$);
+        }
+        return null;
+    }
 }
 tslib_1.__decorate([
     mobx_1.observable,
