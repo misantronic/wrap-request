@@ -96,7 +96,7 @@ class WrapRequest {
     reset(value) {
         this._$ = value;
     }
-    ifFetched(cb) {
+    didFetch(cb) {
         if (this.fetched) {
             return cb(this.$);
         }

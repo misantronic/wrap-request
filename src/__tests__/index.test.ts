@@ -119,7 +119,7 @@ test('it should invoke ifFetched', async () => {
 
     await wrap.request();
 
-    const fetchedValue = wrap.ifFetched(val => `My val is ${val}`);
+    const fetchedValue = wrap.didFetch(val => `My val is ${val}`);
 
     expect(fetchedValue).toEqual('My val is 1337');
 });

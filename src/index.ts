@@ -143,7 +143,7 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         this._$ = value;
     }
 
-    public ifFetched<R = any>(cb: ($: T) => R) {
+    public didFetch<R = any>(cb: ($: T) => R) {
         if (this.fetched) {
             return cb(this.$ as T);
         }
