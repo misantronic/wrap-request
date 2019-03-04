@@ -150,6 +150,16 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
 
         return null;
     }
+
+    public async when(): Promise<T | X> {
+        if (!this.fetched) {
+            return new Promise(resolve => {
+                setTimeout(() => resolve(this.when()), 50);
+            });
+        }
+
+        return this.$;
+    }
 }
 
 export function wrapRequest<T = any, U = any, X = undefined>(

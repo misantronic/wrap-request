@@ -102,6 +102,14 @@ class WrapRequest {
         }
         return null;
     }
+    async when() {
+        if (!this.fetched) {
+            return new Promise(resolve => {
+                setTimeout(() => resolve(this.when()), 50);
+            });
+        }
+        return this.$;
+    }
 }
 tslib_1.__decorate([
     mobx_1.observable,
