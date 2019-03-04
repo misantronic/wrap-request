@@ -112,7 +112,7 @@ test('it should match error', async () => {
     ).toEqual('Error');
 });
 
-test('it should invoke ifFetched', async () => {
+test('it should invoke didFetch', async () => {
     const wrap = wrapRequest(
         () => new Promise(resolve => setTimeout(() => resolve(1337), 0))
     );
@@ -138,4 +138,16 @@ test('it should transform data', async () => {
 
     expect(wrap.$).toEqual({ id: 1, name: 'Foo' });
     expect(data).toEqual({ id: 1, name: 'Foo' });
+});
+
+test('it should wait for result with `when`', async () => {
+    const wrap = wrapRequest(
+        () => new Promise<number>(resolve => setTimeout(() => resolve(1337), 0))
+    );
+
+    const xhr = wrap.when();
+
+    await wrap.request();
+
+    expect(await xhr).toEqual(1337);
 });
