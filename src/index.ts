@@ -151,14 +151,14 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         return null;
     }
 
-    public async when(): Promise<T | X> {
+    public async when(): Promise<T> {
         if (!this.fetched) {
             return new Promise(resolve => {
                 setTimeout(() => resolve(this.when()), 50);
             });
         }
 
-        return this.$;
+        return this.$ as T;
     }
 }
 
