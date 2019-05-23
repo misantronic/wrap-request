@@ -15,6 +15,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
     private options;
     private req;
     constructor(req: (params?: U) => Promise<T>, options?: WrapRequestOptions);
+    private getCacheKey;
     request(params?: U): Promise<T | X>;
     readonly $: T | X;
     /** alias for this.$ */
@@ -30,9 +31,10 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
         empty?(): any;
         error?(e: Error): any;
     }): any;
-    reset(value: T | X): void;
+    reset(value: T | X, params?: U): void;
     didFetch<R = any>(cb: ($: T) => R): R | null;
     when(): Promise<T>;
+    disposeCache(key?: string): void;
 }
 export declare function wrapRequest<T = any, U = any, X = undefined>(request: (params: U) => Promise<T>): WrapRequest<T, U, X>;
 export declare function wrapRequest<T = any, U = any, X = T, Y = T>(request: (params: U) => Promise<T>, options?: WrapRequestOptions<T | X, Y>): WrapRequest<Y, U, Y, Y, Y>;

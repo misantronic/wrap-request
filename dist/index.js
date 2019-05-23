@@ -31,8 +31,18 @@ class WrapRequest {
             this._$ = this.options.defaultData;
         }
     }
-    async request(params) {
+    getCacheKey(params) {
         const { cacheKey } = this.options;
+        if (!cacheKey) {
+            return undefined;
+        }
+        if (params) {
+            return `${cacheKey}-${JSON.stringify(params)}`;
+        }
+        return cacheKey;
+    }
+    async request(params) {
+        const cacheKey = this.getCacheKey(params);
         this.error = undefined;
         try {
             if (cacheKey && wrapRequestCache[cacheKey]) {
@@ -104,8 +114,8 @@ class WrapRequest {
         }
         return null;
     }
-    reset(value) {
-        const { cacheKey } = this.options;
+    reset(value, params) {
+        const cacheKey = this.getCacheKey(params);
         this._$ = value;
         if (cacheKey) {
             wrapRequestCache[cacheKey] = this.$;
@@ -124,6 +134,16 @@ class WrapRequest {
             });
         }
         return this.$;
+    }
+    disposeCache(key) {
+        if (key) {
+            delete wrapRequestCache[key];
+        }
+        else {
+            Object.keys(wrapRequestCache).forEach(key => {
+                delete wrapRequestCache[key];
+            });
+        }
     }
 }
 tslib_1.__decorate([

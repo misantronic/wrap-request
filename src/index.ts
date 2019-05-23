@@ -52,8 +52,22 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         }
     }
 
-    public async request(params?: U) {
+    private getCacheKey(params?: U) {
         const { cacheKey } = this.options;
+
+        if (!cacheKey) {
+            return undefined;
+        }
+
+        if (params) {
+            return `${cacheKey}-${JSON.stringify(params)}`;
+        }
+
+        return cacheKey;
+    }
+
+    public async request(params?: U) {
+        const cacheKey = this.getCacheKey(params);
 
         this.error = undefined;
 
@@ -158,8 +172,8 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         return null;
     }
 
-    public reset(value: T | X) {
-        const { cacheKey } = this.options;
+    public reset(value: T | X, params?: U) {
+        const cacheKey = this.getCacheKey(params);
 
         this._$ = value;
 
@@ -184,6 +198,16 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         }
 
         return this.$ as T;
+    }
+
+    public disposeCache(key?: string) {
+        if (key) {
+            delete wrapRequestCache[key];
+        } else {
+            Object.keys(wrapRequestCache).forEach(key => {
+                delete wrapRequestCache[key];
+            });
+        }
     }
 }
 
