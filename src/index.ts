@@ -3,7 +3,7 @@ import { observable, computed } from 'mobx';
 export type WrapRequestState = 'loading' | 'fetched' | 'error';
 
 interface WrapRequestOptions<T = any, Y = any> {
-    /** when provided, the result will globally cached  */
+    /** when provided, the result will be globally cached  */
     cacheKey?: string;
     /** a function which receives the request `$` and returns a new value */
     transform?: ($: T) => Y;
