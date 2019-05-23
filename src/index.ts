@@ -2,6 +2,13 @@ import { observable, computed } from 'mobx';
 
 export type WrapRequestState = 'loading' | 'fetched' | 'error';
 
+interface WrapRequestOptions<T = any, Y = any> {
+    /** when provided, the result will globally cached  */
+    cacheKey?: string;
+    /** a function which receives the request `$` and returns a new value */
+    transform?: ($: T) => Y;
+}
+
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj: any): boolean {
     if (!obj) return true;
@@ -14,6 +21,8 @@ function isEmpty(obj: any): boolean {
     }
     return true;
 }
+
+const wrapRequestCache: { [key: string]: any } = {};
 
 export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     @observable
@@ -28,15 +37,17 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     @observable
     private state?: WrapRequestState;
 
+    private options: WrapRequestOptions = {};
     private req: (params?: U) => Promise<T>;
 
     constructor(
         req: (params?: U) => Promise<T>,
         $?: T | X,
-        transform?: ($: T | X) => Y
+        options?: WrapRequestOptions
     ) {
         this.req = req;
-        this.transform = transform;
+        this.options = options || {};
+        this.transform = this.options.transform;
 
         if ($) {
             this._$ = $;
@@ -44,16 +55,27 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     }
 
     public async request(params?: U) {
-        this.state = undefined;
+        const { cacheKey } = this.options;
+
         this.error = undefined;
 
         try {
-            this.state = 'loading';
+            if (cacheKey && wrapRequestCache[cacheKey]) {
+                this._$ = wrapRequestCache[cacheKey];
+
+                this.state = 'fetched';
+            } else {
+                this.state = 'loading';
+            }
 
             const result = await this.req(params);
 
             this._$ = result;
             this.state = 'fetched';
+
+            if (cacheKey) {
+                wrapRequestCache[cacheKey] = this.$;
+            }
         } catch (e) {
             this.error = e;
             this.state = 'error';
@@ -65,7 +87,6 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     @computed
     public get $(): T | X {
         if (this.transform) {
-            // tslint:disable-next-line:no-any
             return this.transform(this._$) as any;
         }
 
@@ -140,7 +161,13 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     }
 
     public reset(value: T | X) {
+        const { cacheKey } = this.options;
+
         this._$ = value;
+
+        if (cacheKey) {
+            wrapRequestCache[cacheKey] = this.$;
+        }
     }
 
     public didFetch<R = any>(cb: ($: T) => R) {
@@ -174,18 +201,18 @@ export function wrapRequest<T = any, U = any, X = T>(
 export function wrapRequest<T = any, U = any, X = T, Y = any>(
     request: (params: U) => Promise<T>,
     defaultData: T,
-    transform: ($: T | X) => Y
+    options?: WrapRequestOptions<T | X, Y>
 ): WrapRequest<Y, U, Y, Y, T>;
 
 /**
  * @param request The request to perform when calling `wrapRequest.request`
  * @param defaultData set a default value for `wrapRequest.$` e.g. `[]`
- * @param transform a function which receives the request `$` and returns a new value
+ * @param options
  */
 export function wrapRequest<T = any, U = any, X = any, Y = undefined>(
     request: (params?: U) => Promise<T>,
     defaultData?: T,
-    transform?: ($: T | X) => Y
+    options?: WrapRequestOptions<T | X, Y>
 ): WrapRequest<T, U> {
-    return new WrapRequest<T, U, X, Y>(request, defaultData, transform);
+    return new WrapRequest<T, U, X, Y>(request, defaultData, options);
 }

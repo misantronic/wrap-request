@@ -20,22 +20,34 @@ function isEmpty(obj) {
     }
     return true;
 }
+const wrapRequestCache = {};
 class WrapRequest {
-    constructor(req, $, transform) {
+    constructor(req, $, options) {
+        this.options = {};
         this.req = req;
-        this.transform = transform;
+        this.options = options || {};
+        this.transform = this.options.transform;
         if ($) {
             this._$ = $;
         }
     }
     async request(params) {
-        this.state = undefined;
+        const { cacheKey } = this.options;
         this.error = undefined;
         try {
-            this.state = 'loading';
+            if (cacheKey && wrapRequestCache[cacheKey]) {
+                this._$ = wrapRequestCache[cacheKey];
+                this.state = 'fetched';
+            }
+            else {
+                this.state = 'loading';
+            }
             const result = await this.req(params);
             this._$ = result;
             this.state = 'fetched';
+            if (cacheKey) {
+                wrapRequestCache[cacheKey] = this.$;
+            }
         }
         catch (e) {
             this.error = e;
@@ -45,7 +57,6 @@ class WrapRequest {
     }
     get $() {
         if (this.transform) {
-            // tslint:disable-next-line:no-any
             return this.transform(this._$);
         }
         return this._$;
@@ -94,7 +105,11 @@ class WrapRequest {
         return null;
     }
     reset(value) {
+        const { cacheKey } = this.options;
         this._$ = value;
+        if (cacheKey) {
+            wrapRequestCache[cacheKey] = this.$;
+        }
     }
     didFetch(cb) {
         if (this.fetched) {
@@ -156,10 +171,10 @@ exports.WrapRequest = WrapRequest;
 /**
  * @param request The request to perform when calling `wrapRequest.request`
  * @param defaultData set a default value for `wrapRequest.$` e.g. `[]`
- * @param transform a function which receives the request `$` and returns a new value
+ * @param options
  */
-function wrapRequest(request, defaultData, transform) {
-    return new WrapRequest(request, defaultData, transform);
+function wrapRequest(request, defaultData, options) {
+    return new WrapRequest(request, defaultData, options);
 }
 exports.wrapRequest = wrapRequest;
 //# sourceMappingURL=index.js.map

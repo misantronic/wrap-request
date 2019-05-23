@@ -131,13 +131,31 @@ test('it should transform data', async () => {
                 setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
             ),
         [],
-        res => res[0]
+        { transform: res => res[0] }
     );
 
     const data = await wrap.request();
 
     expect(wrap.$).toEqual({ id: 1, name: 'Foo' });
     expect(data).toEqual({ id: 1, name: 'Foo' });
+});
+
+test('it should cache data', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise<{ id: 1; name: 'Foo' }>(resolve =>
+                setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
+            ),
+        undefined,
+        { cacheKey: 'test' }
+    );
+
+    await wrap.request();
+
+    wrap.request();
+
+    expect(wrap.fetched).toBeTruthy();
+    expect(wrap.$).toEqual({ id: 1, name: 'Foo' });
 });
 
 test('it should wait for result with `when`', async () => {
