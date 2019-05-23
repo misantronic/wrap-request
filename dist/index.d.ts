@@ -1,5 +1,7 @@
 export declare type WrapRequestState = 'loading' | 'fetched' | 'error';
 interface WrapRequestOptions<T = any, Y = any> {
+    /** set a default value for `wrapRequest.$` e.g. `[]` */
+    defaultData?: T;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
     /** a function which receives the request `$` and returns a new value */
@@ -12,7 +14,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
     private state?;
     private options;
     private req;
-    constructor(req: (params?: U) => Promise<T>, $?: T | X, options?: WrapRequestOptions);
+    constructor(req: (params?: U) => Promise<T>, options?: WrapRequestOptions);
     request(params?: U): Promise<T | X>;
     readonly $: T | X;
     /** alias for this.$ */
@@ -33,6 +35,5 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
     when(): Promise<T>;
 }
 export declare function wrapRequest<T = any, U = any, X = undefined>(request: (params: U) => Promise<T>): WrapRequest<T, U, X>;
-export declare function wrapRequest<T = any, U = any, X = T>(request: (params: U) => Promise<T>, defaultData: T): WrapRequest<T, U, X>;
-export declare function wrapRequest<T = any, U = any, X = T, Y = T>(request: (params: U) => Promise<T>, defaultData: T, options?: WrapRequestOptions<T | X, Y>): WrapRequest<Y, U, Y, Y, Y>;
+export declare function wrapRequest<T = any, U = any, X = T, Y = T>(request: (params: U) => Promise<T>, options?: WrapRequestOptions<T | X, Y>): WrapRequest<Y, U, Y, Y, Y>;
 export {};

@@ -22,13 +22,13 @@ function isEmpty(obj) {
 }
 const wrapRequestCache = {};
 class WrapRequest {
-    constructor(req, $, options) {
+    constructor(req, options) {
         this.options = {};
         this.req = req;
         this.options = options || {};
         this.transform = this.options.transform;
-        if ($) {
-            this._$ = $;
+        if (this.options.defaultData) {
+            this._$ = this.options.defaultData;
         }
     }
     async request(params) {
@@ -170,11 +170,10 @@ tslib_1.__decorate([
 exports.WrapRequest = WrapRequest;
 /**
  * @param request The request to perform when calling `wrapRequest.request`
- * @param defaultData set a default value for `wrapRequest.$` e.g. `[]`
- * @param options
+ * @param options {WrapRequestOptions}
  */
-function wrapRequest(request, defaultData, options) {
-    return new WrapRequest(request, defaultData, options);
+function wrapRequest(request, options) {
+    return new WrapRequest(request, options);
 }
 exports.wrapRequest = wrapRequest;
 //# sourceMappingURL=index.js.map

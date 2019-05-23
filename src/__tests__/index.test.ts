@@ -124,14 +124,25 @@ test('it should invoke didFetch', async () => {
     expect(fetchedValue).toEqual('My val is 1337');
 });
 
+test('it should set default data', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise<{ id: 1; name: 'Foo' }[]>(resolve =>
+                setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
+            ),
+        { defaultData: [] }
+    );
+
+    expect(wrap.$).toEqual([]);
+});
+
 test('it should transform data', async () => {
     const wrap = wrapRequest(
         () =>
             new Promise<{ id: 1; name: 'Foo' }[]>(resolve =>
                 setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
             ),
-        [],
-        { transform: res => res[0] }
+        { defaultData: [], transform: res => res[0] }
     );
 
     const data = await wrap.request();
@@ -146,7 +157,6 @@ test('it should cache data', async () => {
             new Promise<{ id: 1; name: 'Foo' }>(resolve =>
                 setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
             ),
-        undefined,
         { cacheKey: 'test' }
     );
 

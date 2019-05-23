@@ -3,6 +3,8 @@ import { observable, computed } from 'mobx';
 export type WrapRequestState = 'loading' | 'fetched' | 'error';
 
 interface WrapRequestOptions<T = any, Y = any> {
+    /** set a default value for `wrapRequest.$` e.g. `[]` */
+    defaultData?: T;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
     /** a function which receives the request `$` and returns a new value */
@@ -40,17 +42,13 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     private options: WrapRequestOptions = {};
     private req: (params?: U) => Promise<T>;
 
-    constructor(
-        req: (params?: U) => Promise<T>,
-        $?: T | X,
-        options?: WrapRequestOptions
-    ) {
+    constructor(req: (params?: U) => Promise<T>, options?: WrapRequestOptions) {
         this.req = req;
         this.options = options || {};
         this.transform = this.options.transform;
 
-        if ($) {
-            this._$ = $;
+        if (this.options.defaultData) {
+            this._$ = this.options.defaultData;
         }
     }
 
@@ -193,26 +191,18 @@ export function wrapRequest<T = any, U = any, X = undefined>(
     request: (params: U) => Promise<T>
 ): WrapRequest<T, U, X>;
 
-export function wrapRequest<T = any, U = any, X = T>(
-    request: (params: U) => Promise<T>,
-    defaultData: T
-): WrapRequest<T, U, X>;
-
 export function wrapRequest<T = any, U = any, X = T, Y = T>(
     request: (params: U) => Promise<T>,
-    defaultData: T,
     options?: WrapRequestOptions<T | X, Y>
 ): WrapRequest<Y, U, Y, Y, Y>;
 
 /**
  * @param request The request to perform when calling `wrapRequest.request`
- * @param defaultData set a default value for `wrapRequest.$` e.g. `[]`
- * @param options
+ * @param options {WrapRequestOptions}
  */
 export function wrapRequest<T = any, U = any, X = any, Y = undefined>(
     request: (params?: U) => Promise<T>,
-    defaultData?: T,
     options?: WrapRequestOptions<T | X, Y>
 ): WrapRequest<T, U> {
-    return new WrapRequest<T, U, X, Y>(request, defaultData, options);
+    return new WrapRequest<T, U, X, Y>(request, options);
 }
