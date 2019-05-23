@@ -198,11 +198,11 @@ export function wrapRequest<T = any, U = any, X = T>(
     defaultData: T
 ): WrapRequest<T, U, X>;
 
-export function wrapRequest<T = any, U = any, X = T, Y = any>(
+export function wrapRequest<T = any, U = any, X = T, Y = T>(
     request: (params: U) => Promise<T>,
     defaultData: T,
     options?: WrapRequestOptions<T | X, Y>
-): WrapRequest<Y, U, Y, Y, T>;
+): WrapRequest<Y, U, Y, Y, Y>;
 
 /**
  * @param request The request to perform when calling `wrapRequest.request`
