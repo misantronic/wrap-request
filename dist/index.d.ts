@@ -17,9 +17,10 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
     constructor(req: (params?: U) => Promise<T>, options?: WrapRequestOptions);
     private getCacheKey;
     request(params?: U): Promise<T | X>;
-    readonly $: T | X;
+    $: T | X;
     /** alias for this.$ */
-    readonly result: T | X;
+    /** alias for this.$ */
+    result: T | X;
     readonly source: Z;
     loading: boolean;
     fetched: boolean;

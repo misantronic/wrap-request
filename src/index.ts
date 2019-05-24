@@ -105,9 +105,18 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         return this._$;
     }
 
+    public set $(value: T | X) {
+        this.reset(value);
+    }
+
     /** alias for this.$ */
     public get result() {
         return this.$;
+    }
+
+    /** alias for this.$ */
+    public set result(value: T | X) {
+        this.$ = value;
     }
 
     @computed

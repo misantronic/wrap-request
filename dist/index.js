@@ -71,9 +71,16 @@ class WrapRequest {
         }
         return this._$;
     }
+    set $(value) {
+        this.reset(value);
+    }
     /** alias for this.$ */
     get result() {
         return this.$;
+    }
+    /** alias for this.$ */
+    set result(value) {
+        this.$ = value;
     }
     get source() {
         return this._$;
@@ -165,7 +172,7 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     mobx_1.computed,
     tslib_1.__metadata("design:type", Object),
-    tslib_1.__metadata("design:paramtypes", [])
+    tslib_1.__metadata("design:paramtypes", [Object])
 ], WrapRequest.prototype, "$", null);
 tslib_1.__decorate([
     mobx_1.computed,
