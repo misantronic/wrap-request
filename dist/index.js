@@ -41,7 +41,9 @@ class WrapRequest {
         }
         return cacheKey;
     }
-    async request(params) {
+    async request(params, options = {
+        stateLoading: true
+    }) {
         const cacheKey = this.getCacheKey(params);
         this.error = undefined;
         try {
@@ -50,7 +52,9 @@ class WrapRequest {
                 this.state = 'fetched';
             }
             else {
-                this.state = 'loading';
+                if (options.stateLoading) {
+                    this.state = 'loading';
+                }
             }
             const result = await this.req(params);
             this._$ = result;

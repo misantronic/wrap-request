@@ -7,6 +7,9 @@ interface WrapRequestOptions<T = any, Y = any> {
     /** a function which receives the request `$` and returns a new value */
     transform?: ($: T) => Y;
 }
+interface WrapRequestRequestOptions {
+    stateLoading?: boolean;
+}
 export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     error?: Error;
     private _$;
@@ -16,7 +19,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
     private req;
     constructor(req: (params?: U) => Promise<T>, options?: WrapRequestOptions);
     private getCacheKey;
-    request(params?: U): Promise<T | X>;
+    request(params?: U, options?: WrapRequestRequestOptions): Promise<T | X>;
     $: T | X;
     /** alias for this.$ */
     /** alias for this.$ */

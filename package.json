@@ -1,10 +1,10 @@
 {
     "name": "wrap-request",
-    "version": "2.2.2",
+    "version": "2.3.0",
     "description": "a request wrapper for asynchronous operations powered by mobx",
     "main": "dist/index.js",
     "scripts": {
-        "start": "tsc -p . && rm -rf dist/__tests__",
+        "start": "npm test && tsc -p . && rm -rf dist/__tests__",
         "test": "jest"
     },
     "repository": {

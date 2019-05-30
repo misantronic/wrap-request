@@ -11,6 +11,10 @@ interface WrapRequestOptions<T = any, Y = any> {
     transform?: ($: T) => Y;
 }
 
+interface WrapRequestRequestOptions {
+    stateLoading?: boolean;
+}
+
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj: any): boolean {
     if (!obj) return true;
@@ -66,7 +70,12 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         return cacheKey;
     }
 
-    public async request(params?: U) {
+    public async request(
+        params?: U,
+        options: WrapRequestRequestOptions = {
+            stateLoading: true
+        }
+    ) {
         const cacheKey = this.getCacheKey(params);
 
         this.error = undefined;
@@ -77,12 +86,15 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
 
                 this.state = 'fetched';
             } else {
-                this.state = 'loading';
+                if (options.stateLoading) {
+                    this.state = 'loading';
+                }
             }
 
             const result = await this.req(params);
 
             this._$ = result;
+
             this.state = 'fetched';
 
             if (cacheKey) {
