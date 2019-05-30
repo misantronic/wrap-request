@@ -233,11 +233,11 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
 }
 
 export function wrapRequest<T = any, U = any, X = undefined>(
-    request: (params: U) => Promise<T>
+    request: (params: U, options?: WrapRequestRequestOptions) => Promise<T>
 ): WrapRequest<T, U, X>;
 
 export function wrapRequest<T = any, U = any, X = T, Y = T>(
-    request: (params: U) => Promise<T>,
+    request: (params: U, options?: WrapRequestRequestOptions) => Promise<T>,
     options?: WrapRequestOptions<T & X, Y>
 ): WrapRequest<Y, U, Y, Y, Y>;
 
@@ -246,7 +246,7 @@ export function wrapRequest<T = any, U = any, X = T, Y = T>(
  * @param options {WrapRequestOptions}
  */
 export function wrapRequest<T = any, U = any, X = any, Y = undefined>(
-    request: (params?: U) => Promise<T>,
+    request: (params?: U, options?: WrapRequestRequestOptions) => Promise<T>,
     options?: WrapRequestOptions<T & X, Y>
 ): WrapRequest<T, U> {
     return new WrapRequest<T, U, X, Y>(request, options);

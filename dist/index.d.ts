@@ -40,6 +40,6 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
     when(): Promise<T>;
     disposeCache(key?: string): void;
 }
-export declare function wrapRequest<T = any, U = any, X = undefined>(request: (params: U) => Promise<T>): WrapRequest<T, U, X>;
-export declare function wrapRequest<T = any, U = any, X = T, Y = T>(request: (params: U) => Promise<T>, options?: WrapRequestOptions<T & X, Y>): WrapRequest<Y, U, Y, Y, Y>;
+export declare function wrapRequest<T = any, U = any, X = undefined>(request: (params: U, options?: WrapRequestRequestOptions) => Promise<T>): WrapRequest<T, U, X>;
+export declare function wrapRequest<T = any, U = any, X = T, Y = T>(request: (params: U, options?: WrapRequestRequestOptions) => Promise<T>, options?: WrapRequestOptions<T & X, Y>): WrapRequest<Y, U, Y, Y, Y>;
 export {};
