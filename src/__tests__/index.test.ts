@@ -1,5 +1,10 @@
 import { wrapRequest } from '../';
 
+interface Obj {
+    id: number;
+    name: string;
+}
+
 test('it should set loading state', () => {
     const wrap = wrapRequest(
         () => new Promise(resolve => setTimeout(resolve, 0))
@@ -127,7 +132,7 @@ test('it should invoke didFetch', async () => {
 test('it should set default data', async () => {
     const wrap = wrapRequest(
         () =>
-            new Promise<{ id: 1; name: 'Foo' }[]>(resolve =>
+            new Promise<Obj[]>(resolve =>
                 setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
             ),
         { defaultData: [] }
@@ -139,13 +144,13 @@ test('it should set default data', async () => {
 test('it should transform data', async () => {
     const wrap = wrapRequest(
         () =>
-            new Promise<{ id: 1; name: 'Foo' }[]>(resolve =>
+            new Promise<Obj[]>(resolve =>
                 setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
             ),
         { defaultData: [], transform: res => res[0] }
     );
 
-    const data = await wrap.request();
+    const data = await wrap.request({ id: 1 });
 
     expect(wrap.$).toEqual({ id: 1, name: 'Foo' });
     expect(data).toEqual({ id: 1, name: 'Foo' });
@@ -154,7 +159,7 @@ test('it should transform data', async () => {
 test('it should cache data', async () => {
     const wrap = wrapRequest(
         () =>
-            new Promise<{ id: 1; name: 'Foo' }>(resolve =>
+            new Promise<Obj>(resolve =>
                 setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
             ),
         { cacheKey: 'test' }
@@ -171,7 +176,7 @@ test('it should cache data', async () => {
 test('it should cache data with parameters', async () => {
     const wrap = wrapRequest(
         () =>
-            new Promise<{ id: 1; name: 'Foo' }>(resolve =>
+            new Promise<Obj>(resolve =>
                 setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
             ),
         { cacheKey: 'test' }
