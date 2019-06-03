@@ -43,6 +43,7 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     @observable
     private state?: WrapRequestState;
 
+    private params?: U;
     private options: WrapRequestOptions = {};
     private req: (params?: U) => Promise<T>;
 
@@ -51,7 +52,11 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         this.options = options || {};
         this.transform = this.options.transform;
 
-        if (this.options.defaultData) {
+        const cacheData = this.getCachedData(this.params);
+
+        if (cacheData) {
+            this._$ = cacheData;
+        } else if (this.options.defaultData) {
             this._$ = this.options.defaultData;
         }
     }
@@ -70,6 +75,16 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         return cacheKey;
     }
 
+    private getCachedData(params?: U): (T | X) | undefined {
+        const cacheKey = this.getCacheKey(params);
+
+        if (cacheKey && wrapRequestCache[cacheKey]) {
+            return wrapRequestCache[cacheKey];
+        }
+
+        return undefined;
+    }
+
     public async request(
         params?: U,
         options: WrapRequestRequestOptions = {
@@ -77,12 +92,14 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         }
     ) {
         const cacheKey = this.getCacheKey(params);
+        const cacheData = this.getCachedData(params);
 
+        this.params = params;
         this.error = undefined;
 
         try {
-            if (cacheKey && wrapRequestCache[cacheKey]) {
-                this._$ = wrapRequestCache[cacheKey];
+            if (cacheData) {
+                this._$ = cacheData;
 
                 this.state = 'fetched';
             } else {

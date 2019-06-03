@@ -27,7 +27,11 @@ class WrapRequest {
         this.req = req;
         this.options = options || {};
         this.transform = this.options.transform;
-        if (this.options.defaultData) {
+        const cacheData = this.getCachedData(this.params);
+        if (cacheData) {
+            this._$ = cacheData;
+        }
+        else if (this.options.defaultData) {
             this._$ = this.options.defaultData;
         }
     }
@@ -41,14 +45,23 @@ class WrapRequest {
         }
         return cacheKey;
     }
+    getCachedData(params) {
+        const cacheKey = this.getCacheKey(params);
+        if (cacheKey && wrapRequestCache[cacheKey]) {
+            return wrapRequestCache[cacheKey];
+        }
+        return undefined;
+    }
     async request(params, options = {
         stateLoading: true
     }) {
         const cacheKey = this.getCacheKey(params);
+        const cacheData = this.getCachedData(params);
+        this.params = params;
         this.error = undefined;
         try {
-            if (cacheKey && wrapRequestCache[cacheKey]) {
-                this._$ = wrapRequestCache[cacheKey];
+            if (cacheData) {
+                this._$ = cacheData;
                 this.state = 'fetched';
             }
             else {

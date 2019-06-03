@@ -15,10 +15,12 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
     private _$;
     transform?: (value: T | X) => Y;
     private state?;
+    private params?;
     private options;
     private req;
     constructor(req: (params?: U) => Promise<T>, options?: WrapRequestOptions);
     private getCacheKey;
+    private getCachedData;
     request(params?: U, options?: WrapRequestRequestOptions): Promise<T | X>;
     $: T | X;
     /** alias for this.$ */
