@@ -43,6 +43,9 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     @observable
     private state?: WrapRequestState;
 
+    public xhr?: Promise<T>;
+    public xhrVersion = 0;
+
     private params?: U;
     private options: WrapRequestOptions = {};
     private req: (params?: U) => Promise<T>;
@@ -91,6 +94,7 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
             stateLoading: true
         }
     ) {
+        const version = ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
         const cacheData = this.getCachedData(params);
 
@@ -108,14 +112,18 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
                 }
             }
 
-            const result = await this.req(params);
+            this.xhr = this.req(params);
 
-            this._$ = result;
+            const result = await this.xhr;
 
-            this.state = 'fetched';
+            if (this.xhrVersion === version) {
+                this._$ = result;
 
-            if (cacheKey) {
-                wrapRequestCache[cacheKey] = this.$;
+                this.state = 'fetched';
+
+                if (cacheKey) {
+                    wrapRequestCache[cacheKey] = this.$;
+                }
             }
         } catch (e) {
             this.error = e;

@@ -23,6 +23,7 @@ function isEmpty(obj) {
 const wrapRequestCache = {};
 class WrapRequest {
     constructor(req, options) {
+        this.xhrVersion = 0;
         this.options = {};
         this.req = req;
         this.options = options || {};
@@ -55,6 +56,7 @@ class WrapRequest {
     async request(params, options = {
         stateLoading: true
     }) {
+        const currentXhrVersion = ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
         const cacheData = this.getCachedData(params);
         this.params = params;
@@ -69,11 +71,14 @@ class WrapRequest {
                     this.state = 'loading';
                 }
             }
-            const result = await this.req(params);
-            this._$ = result;
-            this.state = 'fetched';
-            if (cacheKey) {
-                wrapRequestCache[cacheKey] = this.$;
+            this.xhr = this.req(params);
+            const result = await this.xhr;
+            if (this.xhrVersion === currentXhrVersion) {
+                this._$ = result;
+                this.state = 'fetched';
+                if (cacheKey) {
+                    wrapRequestCache[cacheKey] = this.$;
+                }
             }
         }
         catch (e) {

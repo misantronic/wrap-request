@@ -228,9 +228,10 @@ test('it should wait for result with `when`', async () => {
         () => new Promise<number>(resolve => setTimeout(() => resolve(1337), 0))
     );
 
+    const request = wrap.request();
     const xhr = wrap.when();
 
-    await wrap.request();
+    await request;
 
     expect(await xhr).toEqual(1337);
 });
@@ -247,4 +248,21 @@ test('it should error with `when`', async () => {
     } catch (e) {
         expect(e.message).toEqual('Error');
     }
+});
+
+test('it should always resolve the latest request', async () => {
+    const wrap = wrapRequest(async (config: { delay: number }) => {
+        return new Promise<number>(resolve =>
+            setTimeout(() => resolve(config.delay), config.delay)
+        );
+    });
+
+    wrap.request({ delay: 10 });
+    wrap.request({ delay: 30 });
+    wrap.request({ delay: 25 });
+    wrap.request({ delay: 5 });
+
+    await wrap.when();
+
+    expect(wrap.$).toEqual(5);
 });
