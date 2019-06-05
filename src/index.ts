@@ -126,8 +126,10 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
                 }
             }
         } catch (e) {
-            this.error = e;
-            this.state = 'error';
+            if (this.xhrVersion === version) {
+                this.error = e;
+                this.state = 'error';
+            }
         }
 
         return this.$;

@@ -56,7 +56,7 @@ class WrapRequest {
     async request(params, options = {
         stateLoading: true
     }) {
-        const currentXhrVersion = ++this.xhrVersion;
+        const version = ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
         const cacheData = this.getCachedData(params);
         this.params = params;
@@ -73,7 +73,7 @@ class WrapRequest {
             }
             this.xhr = this.req(params);
             const result = await this.xhr;
-            if (this.xhrVersion === currentXhrVersion) {
+            if (this.xhrVersion === version) {
                 this._$ = result;
                 this.state = 'fetched';
                 if (cacheKey) {
@@ -82,8 +82,10 @@ class WrapRequest {
             }
         }
         catch (e) {
-            this.error = e;
-            this.state = 'error';
+            if (this.xhrVersion === version) {
+                this.error = e;
+                this.state = 'error';
+            }
         }
         return this.$;
     }

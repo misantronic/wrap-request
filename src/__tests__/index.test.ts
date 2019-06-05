@@ -252,8 +252,14 @@ test('it should error with `when`', async () => {
 
 test('it should always resolve the latest request', async () => {
     const wrap = wrapRequest(async (config: { delay: number }) => {
-        return new Promise<number>(resolve =>
-            setTimeout(() => resolve(config.delay), config.delay)
+        return new Promise<number>((resolve, reject) =>
+            setTimeout(() => {
+                if (config.delay === 30) {
+                    reject('Error');
+                } else {
+                    resolve(config.delay);
+                }
+            }, config.delay)
         );
     });
 
@@ -264,5 +270,6 @@ test('it should always resolve the latest request', async () => {
 
     await wrap.when();
 
+    expect(wrap.error).toBeFalsy();
     expect(wrap.$).toEqual(5);
 });

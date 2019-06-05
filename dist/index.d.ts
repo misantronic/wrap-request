@@ -16,7 +16,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> 
     transform?: (value: T | X) => Y;
     private state?;
     xhr?: Promise<T>;
-    xhrVersion: number;
+    private xhrVersion;
     private params?;
     private options;
     private req;
