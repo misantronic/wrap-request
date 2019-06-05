@@ -152,6 +152,9 @@ class WrapRequest {
         return null;
     }
     async when() {
+        if (this.error) {
+            return Promise.reject(this.error);
+        }
         if (!this.fetched) {
             return new Promise(resolve => {
                 setTimeout(() => resolve(this.when()), 50);

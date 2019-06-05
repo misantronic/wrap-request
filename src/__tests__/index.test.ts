@@ -234,3 +234,17 @@ test('it should wait for result with `when`', async () => {
 
     expect(await xhr).toEqual(1337);
 });
+
+test('it should error with `when`', async () => {
+    const wrap = wrapRequest(() => {
+        throw new Error('Error');
+    });
+
+    await wrap.request();
+
+    try {
+        await wrap.when();
+    } catch (e) {
+        expect(e.message).toEqual('Error');
+    }
+});

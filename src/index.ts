@@ -229,6 +229,10 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     }
 
     public async when(): Promise<T> {
+        if (this.error) {
+            return Promise.reject(this.error);
+        }
+
         if (!this.fetched) {
             return new Promise(resolve => {
                 setTimeout(() => resolve(this.when()), 50);
