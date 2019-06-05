@@ -44,7 +44,7 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     private state?: WrapRequestState;
 
     public xhr?: Promise<T>;
-    public xhrVersion = 0;
+    private xhrVersion = 0;
 
     private params?: U;
     private options: WrapRequestOptions = {};
