@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const mobx_1 = require("mobx");
+const mobx_1 = require("./mobx");
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj) {
     if (!obj)
@@ -180,47 +179,6 @@ class WrapRequest {
         }
     }
 }
-tslib_1.__decorate([
-    mobx_1.observable,
-    tslib_1.__metadata("design:type", Error)
-], WrapRequest.prototype, "error", void 0);
-tslib_1.__decorate([
-    mobx_1.observable,
-    tslib_1.__metadata("design:type", Object)
-], WrapRequest.prototype, "_$", void 0);
-tslib_1.__decorate([
-    mobx_1.observable,
-    tslib_1.__metadata("design:type", Function)
-], WrapRequest.prototype, "transform", void 0);
-tslib_1.__decorate([
-    mobx_1.observable,
-    tslib_1.__metadata("design:type", String)
-], WrapRequest.prototype, "state", void 0);
-tslib_1.__decorate([
-    mobx_1.computed,
-    tslib_1.__metadata("design:type", Object),
-    tslib_1.__metadata("design:paramtypes", [Object])
-], WrapRequest.prototype, "$", null);
-tslib_1.__decorate([
-    mobx_1.computed,
-    tslib_1.__metadata("design:type", Object),
-    tslib_1.__metadata("design:paramtypes", [])
-], WrapRequest.prototype, "source", null);
-tslib_1.__decorate([
-    mobx_1.computed,
-    tslib_1.__metadata("design:type", Boolean),
-    tslib_1.__metadata("design:paramtypes", [Boolean])
-], WrapRequest.prototype, "loading", null);
-tslib_1.__decorate([
-    mobx_1.computed,
-    tslib_1.__metadata("design:type", Boolean),
-    tslib_1.__metadata("design:paramtypes", [Boolean])
-], WrapRequest.prototype, "fetched", null);
-tslib_1.__decorate([
-    mobx_1.computed,
-    tslib_1.__metadata("design:type", Object),
-    tslib_1.__metadata("design:paramtypes", [])
-], WrapRequest.prototype, "empty", null);
 exports.WrapRequest = WrapRequest;
 /**
  * @param request The request to perform when calling `wrapRequest.request`
@@ -230,4 +188,5 @@ function wrapRequest(request, options) {
     return new WrapRequest(request, options);
 }
 exports.wrapRequest = wrapRequest;
+mobx_1.decorateWithMobx();
 //# sourceMappingURL=index.js.map

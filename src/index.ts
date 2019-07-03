@@ -1,4 +1,4 @@
-import { observable, computed } from 'mobx';
+import { decorateWithMobx } from './mobx';
 
 export type WrapRequestState = 'loading' | 'fetched' | 'error';
 
@@ -31,18 +31,10 @@ function isEmpty(obj: any): boolean {
 const wrapRequestCache: { [key: string]: any } = {};
 
 export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
-    @observable
+    public _$!: T | X;
     public error?: Error;
-
-    @observable
-    private _$!: T | X;
-
-    @observable
     public transform?: (value: T | X) => Y;
-
-    @observable
-    private state?: WrapRequestState;
-
+    public state?: WrapRequestState;
     public xhr?: Promise<T>;
     private xhrVersion = 0;
 
@@ -135,7 +127,6 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         return this.$;
     }
 
-    @computed
     public get $(): T | X {
         if (this.transform) {
             return this.transform(this._$) as any;
@@ -158,12 +149,10 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         this.$ = value;
     }
 
-    @computed
     public get source(): Z {
         return this._$ as any;
     }
 
-    @computed
     public get loading() {
         return this.state === 'loading';
     }
@@ -172,7 +161,6 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         this.state = value ? 'loading' : undefined;
     }
 
-    @computed
     public get fetched() {
         return this.state === 'fetched';
     }
@@ -181,7 +169,6 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
         this.state = value ? 'fetched' : undefined;
     }
 
-    @computed
     public get empty() {
         if (this.fetched && isEmpty(this.$)) {
             return true;
@@ -282,3 +269,5 @@ export function wrapRequest<T = any, U = any, X = any, Y = undefined>(
 ): WrapRequest<T, U> {
     return new WrapRequest<T, U, X, Y>(request, options);
 }
+
+decorateWithMobx();

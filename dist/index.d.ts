@@ -11,10 +11,10 @@ interface WrapRequestRequestOptions {
     stateLoading?: boolean;
 }
 export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
+    _$: T | X;
     error?: Error;
-    private _$;
     transform?: (value: T | X) => Y;
-    private state?;
+    state?: WrapRequestState;
     xhr?: Promise<T>;
     private xhrVersion;
     private params?;
