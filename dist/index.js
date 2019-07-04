@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const mobx_1 = require("./mobx");
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj) {
     if (!obj)
@@ -188,5 +187,4 @@ function wrapRequest(request, options) {
     return new WrapRequest(request, options);
 }
 exports.wrapRequest = wrapRequest;
-mobx_1.decorateWithMobx();
 //# sourceMappingURL=index.js.map

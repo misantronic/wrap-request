@@ -1,5 +1,3 @@
-import { decorateWithMobx } from './mobx';
-
 export type WrapRequestState = 'loading' | 'fetched' | 'error';
 
 interface WrapRequestOptions<T = any, Y = any> {
@@ -269,5 +267,3 @@ export function wrapRequest<T = any, U = any, X = any, Y = undefined>(
 ): WrapRequest<T, U> {
     return new WrapRequest<T, U, X, Y>(request, options);
 }
-
-decorateWithMobx();

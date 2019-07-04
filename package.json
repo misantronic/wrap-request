@@ -1,7 +1,7 @@
 {
     "name": "wrap-request",
-    "version": "2.6.0",
-    "description": "a request wrapper for asynchronous operations powered by mobx",
+    "version": "3.0.0",
+    "description": "a request wrapper for asynchronous operations",
     "main": "dist/index.js",
     "scripts": {
         "start": "npm test && tsc -p . && rm -rf dist/__tests__",
@@ -12,7 +12,6 @@
         "url": "git+https://github.com/misantronic/wrap-request.git"
     },
     "keywords": [
-        "mobx",
         "xhr"
     ],
     "author": "David Schkalee <david.schkalee@posteo.de>",
@@ -21,16 +20,10 @@
         "url": "https://github.com/misantronic/wrap-request/issues"
     },
     "homepage": "https://github.com/misantronic/wrap-request#readme",
-    "peerDependencies": {
-        "mobx": ">= 4.0.0"
-    },
-    "dependencies": {
-        "tslib": ">= 1.9.0"
-    },
+    "dependencies": {},
     "devDependencies": {
         "@types/jest": "^24.0.13",
         "jest": "^24.8.0",
-        "mobx": "^4.10.0",
         "ts-jest": "^24.0.2",
         "typescript": "^3.5.1"
     },
