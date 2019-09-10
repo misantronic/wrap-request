@@ -166,6 +166,20 @@ test('it should transform data', async () => {
     expect(data).toEqual({ id: 1, name: 'Foo' });
 });
 
+test('it should fail to transform data', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise<Obj[]>((_, reject) =>
+                setTimeout(() => reject('Error'), 0)
+            ),
+        { transform: res => res[0] }
+    );
+
+    await wrap.request({ id: 1 });
+
+    expect(wrap.$).toEqual(undefined);
+});
+
 test('it should cache data', async () => {
     const wrap = wrapRequest(
         () =>

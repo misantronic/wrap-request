@@ -88,10 +88,11 @@ class WrapRequest {
         return this.$;
     }
     get $() {
+        const $ = this._$;
         if (this.transform) {
-            return this.transform(this._$);
+            return this.transform($);
         }
-        return this._$;
+        return $;
     }
     set $(value) {
         this.reset(value);

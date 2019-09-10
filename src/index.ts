@@ -126,7 +126,7 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
     }
 
     public get $(): T | X {
-        if (this.transform) {
+        if (this.transform && this._$) {
             return this.transform(this._$) as any;
         }
 
