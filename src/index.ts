@@ -11,6 +11,7 @@ interface WrapRequestOptions<T = any, Y = any> {
 
 interface WrapRequestRequestOptions {
     stateLoading?: boolean;
+    throwError?: boolean;
 }
 
 /** @see https://stackoverflow.com/a/4994244/1138860 */
@@ -80,9 +81,7 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
 
     public async request(
         params?: U,
-        options: WrapRequestRequestOptions = {
-            stateLoading: true
-        }
+        { stateLoading = true, throwError = false }: WrapRequestRequestOptions = {}
     ) {
         const version = ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
@@ -97,7 +96,7 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
 
                 this.state = 'fetched';
             } else {
-                if (options.stateLoading) {
+                if (stateLoading) {
                     this.state = 'loading';
                 }
             }
@@ -119,6 +118,9 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
             if (this.xhrVersion === version) {
                 this.error = e;
                 this.state = 'error';
+            }
+            if (throwError) {
+                throw e;
             }
         }
 

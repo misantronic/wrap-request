@@ -287,3 +287,27 @@ test('it should always resolve the latest request', async () => {
     expect(wrap.error).toBeFalsy();
     expect(wrap.$).toEqual(5);
 });
+
+test("it should not throw error without throwError", async () => {
+  const wrap = wrapRequest(
+    () => new Promise((_resolve, reject) => setTimeout(() => reject("1337"), 0))
+  );
+
+  await wrap.request();
+
+  expect(wrap.result).toBeFalsy();
+});
+
+test("it should throw error throwError", async () => {
+  const wrap = wrapRequest(
+    () => new Promise((_resolve, reject) => setTimeout(() => reject("1337"), 0))
+  );
+
+  let error;
+  try {
+    await wrap.request({}, { throwError: true });
+  } catch (e) {
+    error = e;
+  }
+  expect(error).toBeTruthy();
+});
