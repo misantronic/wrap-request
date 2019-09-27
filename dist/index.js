@@ -51,9 +51,7 @@ class WrapRequest {
         }
         return undefined;
     }
-    async request(params, options = {
-        stateLoading: true
-    }) {
+    async request(params, { stateLoading = true, throwError = false } = {}) {
         const version = ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
         const cacheData = this.getCachedData(params);
@@ -65,7 +63,7 @@ class WrapRequest {
                 this.state = 'fetched';
             }
             else {
-                if (options.stateLoading) {
+                if (stateLoading) {
                     this.state = 'loading';
                 }
             }
@@ -84,15 +82,17 @@ class WrapRequest {
                 this.error = e;
                 this.state = 'error';
             }
+            if (throwError) {
+                throw e;
+            }
         }
         return this.$;
     }
     get $() {
-        const $ = this._$;
-        if (this.transform) {
-            return this.transform($);
+        if (this.transform && this._$) {
+            return this.transform(this._$);
         }
-        return $;
+        return this._$;
     }
     set $(value) {
         this.reset(value);
