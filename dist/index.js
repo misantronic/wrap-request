@@ -12,6 +12,8 @@ function isEmpty(obj) {
         return true;
     if (typeof obj !== 'object')
         return true;
+    if (obj instanceof Map || obj instanceof Set)
+        return obj.size === 0;
     for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key))
             return false;

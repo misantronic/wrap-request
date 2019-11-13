@@ -21,6 +21,7 @@ function isEmpty(obj: any): boolean {
     if (obj.length > 0) return false;
     if (obj.length === 0) return true;
     if (typeof obj !== 'object') return true;
+    if (obj instanceof Map || obj instanceof Set) return obj.size === 0;
     for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) return false;
     }
@@ -81,7 +82,10 @@ export class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X> {
 
     public async request(
         params?: U,
-        { stateLoading = true, throwError = false }: WrapRequestRequestOptions = {}
+        {
+            stateLoading = true,
+            throwError = false
+        }: WrapRequestRequestOptions = {}
     ) {
         const version = ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
