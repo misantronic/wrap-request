@@ -90,6 +90,13 @@ export class WrapRequest<
         return undefined;
     }
 
+    private checkXhrVersion(version: number, stateLoading?: boolean): boolean {
+        if (stateLoading) {
+            return  this.xhrVersion === version;
+        }
+        return this.xhrVersion >= version;
+    }
+
     public async request(
         params?: U,
         {
@@ -123,7 +130,7 @@ export class WrapRequest<
 
             const result = await this.xhr;
 
-            if (this.xhrVersion === version) {
+            if (this.checkXhrVersion(version, stateLoading)) {
                 this._$ = result;
 
                 if (this.options.metadata) {
@@ -137,7 +144,7 @@ export class WrapRequest<
                 }
             }
         } catch (e) {
-            if (this.xhrVersion === version) {
+            if (this.checkXhrVersion(version, stateLoading)) {
                 this.error = e;
                 this.state = 'error';
             }
