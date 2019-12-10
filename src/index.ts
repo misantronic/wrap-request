@@ -109,7 +109,7 @@ export class WrapRequest<
                 this._$ = cacheData;
 
                 if (this.options.metadata) {
-                    this._metadata = this.options.metadata(this._$);
+                    this._metadata = this.options.metadata(cacheData);
                 }
 
                 this.state = 'fetched';
@@ -127,7 +127,7 @@ export class WrapRequest<
                 this._$ = result;
 
                 if (this.options.metadata) {
-                    this._metadata = this.options.metadata(this._$);
+                    this._metadata = this.options.metadata(result);
                 }
 
                 this.state = 'fetched';
