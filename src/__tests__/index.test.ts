@@ -323,21 +323,43 @@ test("it should not throw error without throwError", async () => {
     () => new Promise((_resolve, reject) => setTimeout(() => reject("1337"), 0))
   );
 
-  await wrap.request();
+    await wrap.request();
 
-  expect(wrap.result).toBeFalsy();
+    expect(wrap.result).toBeFalsy();
 });
 
-test("it should throw error throwError", async () => {
+test('it should not throw error without throwError', async () => {
   const wrap = wrapRequest(
-    () => new Promise((_resolve, reject) => setTimeout(() => reject("1337"), 0))
+      () =>
+          new Promise((_resolve, reject) =>
+              setTimeout(() => reject('1337'), 0)
+          )
   );
+})
 
-  let error;
-  try {
-    await wrap.request({}, { throwError: true });
-  } catch (e) {
-    error = e;
-  }
-  expect(error).toBeTruthy();
+test('it should throw error throwError', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise((_resolve, reject) =>
+                setTimeout(() => reject('1337'), 0)
+            )
+    );
+
+    let error;
+    try {
+        await wrap.request({}, { throwError: true });
+    } catch (e) {
+        error = e;
+    }
+    expect(error).toBeTruthy();
+});
+
+test('it should set metadata', async () => {
+    const wrap = wrapRequest(async () => 5, {
+        metadata: res => ({ num: res })
+    });
+
+    await wrap.request();
+
+    expect(wrap.metadata!.num).toBe(5);
 });
