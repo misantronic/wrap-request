@@ -293,13 +293,15 @@ function timeout(timeout: number): Promise<void> {
 }
 
 test('it should always resolve the interim results when stateLoading is set to false', async () => {
-    const wrap = wrapRequest(async ({delay, data}: { delay: number, data: string }) => { 
-        await timeout(delay);
-        return data;
-    });
+    const wrap = wrapRequest(
+        async ({ delay, data }: { delay: number; data: string }) => {
+            await timeout(delay);
+            return data;
+        }
+    );
 
     const options = { stateLoading: false };
-    wrap.request({ delay: 20, data: 'first'}, options);
+    wrap.request({ delay: 20, data: 'first' }, options);
 
     await timeout(10);
 
@@ -313,15 +315,18 @@ test('it should always resolve the interim results when stateLoading is set to f
     expect(wrap.$).toEqual('first');
 
     await timeout(10);
-    
+
     expect(wrap.error).toBeFalsy();
     expect(wrap.$).toEqual('second');
 });
 
-test("it should not throw error without throwError", async () => {
-  const wrap = wrapRequest(
-    () => new Promise((_resolve, reject) => setTimeout(() => reject("1337"), 0))
-  );
+test('it should not throw error without throwError', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise((_resolve, reject) =>
+                setTimeout(() => reject('1337'), 0)
+            )
+    );
 
     await wrap.request();
 
@@ -329,13 +334,22 @@ test("it should not throw error without throwError", async () => {
 });
 
 test('it should not throw error without throwError', async () => {
-  const wrap = wrapRequest(
-      () =>
-          new Promise((_resolve, reject) =>
-              setTimeout(() => reject('1337'), 0)
-          )
-  );
-})
+    const wrap = wrapRequest(
+        () =>
+            new Promise((_resolve, reject) =>
+                setTimeout(() => reject('1337'), 0)
+            )
+    );
+
+    let error;
+    try {
+        await wrap.request({});
+    } catch (e) {
+        error = e;
+    }
+
+    expect(error).toBeFalsy();
+});
 
 test('it should throw error throwError', async () => {
     const wrap = wrapRequest(
