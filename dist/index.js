@@ -53,6 +53,12 @@ class WrapRequest {
         }
         return undefined;
     }
+    checkXhrVersion(version, stateLoading) {
+        if (stateLoading) {
+            return this.xhrVersion === version;
+        }
+        return this.xhrVersion >= version;
+    }
     async request(params, { stateLoading = true, throwError = false } = {}) {
         const version = ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
@@ -74,7 +80,7 @@ class WrapRequest {
             }
             this.xhr = this.req(params);
             const result = await this.xhr;
-            if (this.xhrVersion === version) {
+            if (this.checkXhrVersion(version, stateLoading)) {
                 this._$ = result;
                 if (this.options.metadata) {
                     this._metadata = this.options.metadata(result);
@@ -86,7 +92,7 @@ class WrapRequest {
             }
         }
         catch (e) {
-            if (this.xhrVersion === version) {
+            if (this.checkXhrVersion(version, stateLoading)) {
                 this.error = e;
                 this.state = 'error';
             }

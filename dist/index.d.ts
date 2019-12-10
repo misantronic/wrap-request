@@ -27,6 +27,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, 
     constructor(req: (params?: U) => Promise<T>, options?: WrapRequestOptions);
     private getCacheKey;
     private getCachedData;
+    private checkXhrVersion;
     request(params?: U, { stateLoading, throwError }?: WrapRequestRequestOptions): Promise<T | X>;
     get $(): T | X;
     set $(value: T | X);
