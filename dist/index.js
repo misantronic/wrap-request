@@ -62,6 +62,9 @@ class WrapRequest {
         try {
             if (cacheData) {
                 this._$ = cacheData;
+                if (this.options.metadata) {
+                    this._metadata = this.options.metadata(this._$);
+                }
                 this.state = 'fetched';
             }
             else {
@@ -73,6 +76,9 @@ class WrapRequest {
             const result = await this.xhr;
             if (this.xhrVersion === version) {
                 this._$ = result;
+                if (this.options.metadata) {
+                    this._metadata = this.options.metadata(this._$);
+                }
                 this.state = 'fetched';
                 if (cacheKey) {
                     wrapRequestCache[cacheKey] = this.$;
@@ -109,6 +115,9 @@ class WrapRequest {
     }
     get source() {
         return this._$;
+    }
+    get metadata() {
+        return this._metadata;
     }
     get loading() {
         return this.state === 'loading';
