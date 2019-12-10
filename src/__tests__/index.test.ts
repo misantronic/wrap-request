@@ -288,6 +288,36 @@ test('it should always resolve the latest request', async () => {
     expect(wrap.$).toEqual(5);
 });
 
+function timeout(timeout: number): Promise<void> {
+    return new Promise<void>(resolve => setTimeout(() => resolve(), timeout));
+}
+
+test('it should always resolve the interim results when stateLoading is set to false', async () => {
+    const wrap = wrapRequest(async ({delay, data}: { delay: number, data: string }) => { 
+        await timeout(delay);
+        return data;
+    });
+
+    const options = { stateLoading: false };
+    wrap.request({ delay: 20, data: 'first'}, options);
+
+    await timeout(10);
+
+    expect(wrap.error).toBeFalsy();
+    expect(wrap.$).toEqual(undefined);
+
+    wrap.request({ delay: 22, data: 'second' }, options);
+
+    await timeout(12);
+    expect(wrap.error).toBeFalsy();
+    expect(wrap.$).toEqual('first');
+
+    await timeout(10);
+    
+    expect(wrap.error).toBeFalsy();
+    expect(wrap.$).toEqual('second');
+});
+
 test("it should not throw error without throwError", async () => {
   const wrap = wrapRequest(
     () => new Promise((_resolve, reject) => setTimeout(() => reject("1337"), 0))
