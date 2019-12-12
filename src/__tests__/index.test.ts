@@ -377,3 +377,15 @@ test('it should set metadata', async () => {
 
     expect(wrap.metadata!.num).toBe(5);
 });
+
+test('it should reset metadata', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], {
+        metadata: res => res[0]
+    });
+
+    await wrap.request();
+
+    wrap.reset([5]);
+
+    expect(wrap.metadata).toBe(5);
+});

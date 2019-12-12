@@ -167,6 +167,9 @@ class WrapRequest {
         if (cacheKey) {
             wrapRequestCache[cacheKey] = this.$;
         }
+        if (this.options.metadata) {
+            this._metadata = this.options.metadata(value);
+        }
     }
     didFetch(cb) {
         if (this.fetched) {

@@ -92,7 +92,7 @@ export class WrapRequest<
 
     private checkXhrVersion(version: number, stateLoading?: boolean): boolean {
         if (stateLoading) {
-            return  this.xhrVersion === version;
+            return this.xhrVersion === version;
         }
         return this.xhrVersion >= version;
     }
@@ -247,6 +247,10 @@ export class WrapRequest<
 
         if (cacheKey) {
             wrapRequestCache[cacheKey] = this.$;
+        }
+
+        if (this.options.metadata) {
+            this._metadata = this.options.metadata(value);
         }
     }
 
