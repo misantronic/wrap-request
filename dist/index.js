@@ -164,6 +164,7 @@ class WrapRequest {
     reset(value, params) {
         const cacheKey = this.getCacheKey(params);
         this._$ = value;
+        this.error = undefined;
         if (cacheKey) {
             wrapRequestCache[cacheKey] = this.$;
         }

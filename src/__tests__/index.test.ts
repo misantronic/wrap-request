@@ -389,3 +389,25 @@ test('it should reset metadata', async () => {
 
     expect(wrap.metadata).toBe(5);
 });
+
+test('it should set error', async () => {
+    const wrap = wrapRequest(async () => {
+        throw new Error('test');
+    });
+
+    await wrap.request();
+
+    expect(wrap.error!.message).toBe('test');
+});
+
+test('it should reset error', async () => {
+    const wrap = wrapRequest(async () => {
+        throw new Error('test');
+    });
+
+    await wrap.request();
+
+    wrap.reset(undefined);
+
+    expect(wrap.error).toBeUndefined();
+});
