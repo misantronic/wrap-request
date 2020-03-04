@@ -48,14 +48,28 @@ const result = await wrappedXhr.request();
 console.log(result); // capped list containing 15 items
 console.log(wrappedXhr.$) // same as result
 console.log(wrappedXhr.source); // list containing all items
-
 ```
 
-## react hook
+## reset
+
+Reset all wrapper-values to its initial state.
+
+```js
+const wrappedXhr = wrapRequest(() => fetch('...'), {
+  defaultData: []
+});
+
+await wrappedXhr.request();
+
+wrappedXhr.reset();
+```
+
+
+# react hook
 
 There is an implementation for working with react-hooks inside your components. [react-wrap-request](https://github.com/misantronic/react-wrap-request)
 
-## mobx dependency
+# mobx dependency
 
 wrap-request used to have a direct dependency on mobx. this was removed in 3.0.0
 please use [mobx-wrap-request](https://github.com/misantronic/mobx-wrap-request) for further support.
