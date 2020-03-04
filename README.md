@@ -33,6 +33,24 @@ especially when dealing with lists it comes in handy to set a default value.
 const wrappedXhr = wrapRequest(() => fetch('...'), { defaultData: [] });
 ```
 
+## transform
+
+sometimes it is useful, to directly transform the result and keep a copy of the original data in the wrapper.
+
+```js
+const wrappedXhr = wrapRequest(() => fetch('...'), {
+  transform: res => res.slice(0, 15),
+  defaultData: []
+});
+
+const result = await wrappedXhr.request();
+
+console.log(result); // capped list containing 15 items
+console.log(wrappedXhr.$) // same as result
+console.log(wrappedXhr.source); // list containing all items
+
+```
+
 ## react hook
 
 There is an implementation for working with react-hooks inside your components. [react-wrap-request](https://github.com/misantronic/react-wrap-request)
