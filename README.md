@@ -25,6 +25,14 @@ wrappedXhr.match({
 })
 ```
 
+## default data
+
+especially when dealing with lists it comes in handy to set a default value.
+
+```js
+const wrappedXhr = wrapRequest(() => fetch('...'), { defaultData: [] });
+```
+
 ## react hook
 
 There is an implementation for working with react-hooks inside your components. [react-wrap-request](https://github.com/misantronic/react-wrap-request)
