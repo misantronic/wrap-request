@@ -64,6 +64,22 @@ await wrappedXhr.request();
 wrappedXhr.reset();
 ```
 
+## metadata
+
+You can save any metadata on the wrapper to store further informations.
+
+
+```js
+const wrappedXhr = wrapRequest(() => fetch('...'), {
+  metadata: res => ({
+    fullName: `${res.firstname} ${res.lastname}`
+  })
+});
+
+await wrappedXhr.request();
+
+console.log(wrappedXhr.metadata)
+```
 
 # react hook
 
