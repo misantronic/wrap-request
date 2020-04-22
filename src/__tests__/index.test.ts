@@ -7,7 +7,7 @@ interface Obj {
 
 test('it should set loading state', () => {
     const wrap = wrapRequest(
-        () => new Promise(resolve => setTimeout(resolve, 0))
+        () => new Promise((resolve) => setTimeout(resolve, 0))
     );
 
     wrap.request();
@@ -18,7 +18,7 @@ test('it should set loading state', () => {
 
 test('it should set fetched state', async () => {
     const wrap = wrapRequest(
-        () => new Promise(resolve => setTimeout(resolve, 0))
+        () => new Promise((resolve) => setTimeout(resolve, 0))
     );
 
     await wrap.request();
@@ -29,7 +29,7 @@ test('it should set fetched state', async () => {
 
 test('it should set data', async () => {
     const wrap = wrapRequest(
-        () => new Promise(resolve => setTimeout(() => resolve(1337), 0))
+        () => new Promise((resolve) => setTimeout(() => resolve(1337), 0))
     );
 
     const data = await wrap.request();
@@ -40,7 +40,7 @@ test('it should set data', async () => {
 
 test('it should set request data without loading-state', async () => {
     const wrap = wrapRequest(
-        () => new Promise(resolve => setTimeout(() => resolve(1337), 0))
+        () => new Promise((resolve) => setTimeout(() => resolve(1337), 0))
     );
 
     wrap.request({}, { stateLoading: false });
@@ -61,7 +61,7 @@ test('it should set error', async () => {
 
 test('it should match loading', async () => {
     const wrap = wrapRequest(
-        () => new Promise(resolve => setTimeout(() => resolve(1337), 0))
+        () => new Promise((resolve) => setTimeout(() => resolve(1337), 0))
     );
 
     wrap.request();
@@ -71,14 +71,14 @@ test('it should match loading', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: e => e
+            error: (e) => e,
         })
     ).toEqual('Loading');
 });
 
 test('it should match fetched', async () => {
     const wrap = wrapRequest(
-        () => new Promise(resolve => setTimeout(() => resolve(1337), 0))
+        () => new Promise((resolve) => setTimeout(() => resolve(1337), 0))
     );
 
     await wrap.request();
@@ -88,14 +88,14 @@ test('it should match fetched', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: e => e
+            error: (e) => e,
         })
     ).toEqual('Fetched');
 });
 
 test('it should match empty', async () => {
     const wrap = wrapRequest(
-        () => new Promise(resolve => setTimeout(() => resolve([]), 0))
+        () => new Promise((resolve) => setTimeout(() => resolve([]), 0))
     );
 
     await wrap.request();
@@ -105,7 +105,7 @@ test('it should match empty', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: e => e
+            error: (e) => e,
         })
     ).toEqual('Empty');
 });
@@ -122,19 +122,19 @@ test('it should match error', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: e => e
+            error: (e) => e,
         })
     ).toEqual('Error');
 });
 
 test('it should invoke didFetch', async () => {
     const wrap = wrapRequest(
-        () => new Promise(resolve => setTimeout(() => resolve(1337), 0))
+        () => new Promise((resolve) => setTimeout(() => resolve(1337), 0))
     );
 
     await wrap.request();
 
-    const fetchedValue = wrap.didFetch(val => `My val is ${val}`);
+    const fetchedValue = wrap.didFetch((val) => `My val is ${val}`);
 
     expect(fetchedValue).toEqual('My val is 1337');
 });
@@ -142,7 +142,7 @@ test('it should invoke didFetch', async () => {
 test('it should set default data', async () => {
     const wrap = wrapRequest(
         () =>
-            new Promise<Obj[]>(resolve =>
+            new Promise<Obj[]>((resolve) =>
                 setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
             ),
         { defaultData: [] }
@@ -154,10 +154,10 @@ test('it should set default data', async () => {
 test('it should transform data', async () => {
     const wrap = wrapRequest(
         () =>
-            new Promise<Obj[]>(resolve =>
+            new Promise<Obj[]>((resolve) =>
                 setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
             ),
-        { defaultData: [], transform: res => res[0] }
+        { defaultData: [], transform: (res) => res[0] }
     );
 
     const data = await wrap.request({ id: 1 });
@@ -172,7 +172,7 @@ test('it should fail to transform data', async () => {
             new Promise<Obj[]>((_, reject) =>
                 setTimeout(() => reject('Error'), 0)
             ),
-        { transform: res => res[0] }
+        { transform: (res) => res[0] }
     );
 
     await wrap.request({ id: 1 });
@@ -183,7 +183,7 @@ test('it should fail to transform data', async () => {
 test('it should cache data', async () => {
     const wrap = wrapRequest(
         () =>
-            new Promise<Obj>(resolve =>
+            new Promise<Obj>((resolve) =>
                 setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
             ),
         { cacheKey: 'test' }
@@ -200,7 +200,7 @@ test('it should cache data', async () => {
 test('it should cache data with parameters', async () => {
     const wrap = wrapRequest(
         () =>
-            new Promise<Obj>(resolve =>
+            new Promise<Obj>((resolve) =>
                 setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
             ),
         { cacheKey: 'test' }
@@ -217,7 +217,7 @@ test('it should cache data with parameters', async () => {
 test('it should set default data from cache', async () => {
     const wrap = wrapRequest(
         () =>
-            new Promise<Obj>(resolve =>
+            new Promise<Obj>((resolve) =>
                 setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
             ),
         { cacheKey: 'test' }
@@ -227,7 +227,7 @@ test('it should set default data from cache', async () => {
 
     const wrap2 = wrapRequest(
         () =>
-            new Promise<Obj>(resolve =>
+            new Promise<Obj>((resolve) =>
                 setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
             ),
         { cacheKey: 'test' }
@@ -239,7 +239,8 @@ test('it should set default data from cache', async () => {
 
 test('it should wait for result with `when`', async () => {
     const wrap = wrapRequest(
-        () => new Promise<number>(resolve => setTimeout(() => resolve(1337), 0))
+        () =>
+            new Promise<number>((resolve) => setTimeout(() => resolve(1337), 0))
     );
 
     const request = wrap.request();
@@ -289,7 +290,7 @@ test('it should always resolve the latest request', async () => {
 });
 
 function timeout(timeout: number): Promise<void> {
-    return new Promise<void>(resolve => setTimeout(() => resolve(), timeout));
+    return new Promise<void>((resolve) => setTimeout(() => resolve(), timeout));
 }
 
 test('it should always resolve the interim results when stateLoading is set to false', async () => {
@@ -370,7 +371,7 @@ test('it should throw error throwError', async () => {
 
 test('it should set metadata', async () => {
     const wrap = wrapRequest(async () => 5, {
-        metadata: res => ({ num: res })
+        metadata: (res) => ({ num: res }),
     });
 
     await wrap.request();
@@ -378,9 +379,21 @@ test('it should set metadata', async () => {
     expect(wrap.metadata!.num).toBe(5);
 });
 
+test('it should get metadata (and ignore the transformed value)', async () => {
+    const wrap = wrapRequest(async () => [5], {
+        transform: (res) => res[0],
+        metadata: (res) => ({ num: res }),
+    });
+
+    await wrap.request();
+
+    expect(wrap.$).toEqual(5);
+    expect(wrap.metadata!.num).toEqual([5]);
+});
+
 test('it should reset metadata', async () => {
     const wrap = wrapRequest(async () => [1, 2, 3], {
-        metadata: res => res[0]
+        metadata: (res) => res[0],
     });
 
     await wrap.request();
