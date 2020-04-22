@@ -1,20 +1,91 @@
 # wrap-request
 
-a request wrapper for asynchronous operations
+a request wrapper for asynchronous operations 
 
 ## basic usage
 
 ```js
 const wrappedXhr = wrapRequest(config => fetch('...'));
 
-await wrappedXhr.request({ id: 1 });
+const { loading, fetched, error } = wrappedXhr;
+
+const result = await wrappedXhr.request({ id: 1 });
 ```
 
-## react hook
+## pattern matching
+
+```js
+const wrappedXhr = wrapRequest(config => fetch('...'));
+
+wrappedXhr.match({
+  loading: () => 'Loading...',
+  error: e => e.message,
+  empty: () => 'No data.',
+  fetched: res => res.data,
+})
+```
+
+## default data
+
+especially when dealing with lists it comes in handy to set a default value.
+
+```js
+const wrappedXhr = wrapRequest(() => fetch('...'), { defaultData: [] });
+```
+
+## transform
+
+sometimes it is useful, to directly transform the result and keep a copy of the original data in the wrapper.
+
+```js
+const wrappedXhr = wrapRequest(() => fetch('...'), {
+  transform: res => res.slice(0, 15),
+  defaultData: []
+});
+
+const result = await wrappedXhr.request();
+
+console.log(result); // capped list containing 15 items
+console.log(wrappedXhr.$) // same as result
+console.log(wrappedXhr.source); // list containing all items
+```
+
+## reset
+
+Reset all wrapper-values to its initial state.
+
+```js
+const wrappedXhr = wrapRequest(() => fetch('...'), {
+  defaultData: []
+});
+
+await wrappedXhr.request();
+
+wrappedXhr.reset();
+```
+
+## metadata
+
+You can save any metadata on the wrapper to store further informations.
+
+
+```js
+const wrappedXhr = wrapRequest(() => fetch('...'), {
+  metadata: res => ({
+    fullName: `${res.firstname} ${res.lastname}`
+  })
+});
+
+await wrappedXhr.request();
+
+console.log(wrappedXhr.metadata)
+```
+
+# react hook
 
 There is an implementation for working with react-hooks inside your components. [react-wrap-request](https://github.com/misantronic/react-wrap-request)
 
-## mobx dependency
+# mobx dependency
 
 wrap-request used to have a direct dependency on mobx. this was removed in 3.0.0
 please use [mobx-wrap-request](https://github.com/misantronic/mobx-wrap-request) for further support.
