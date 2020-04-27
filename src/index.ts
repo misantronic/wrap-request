@@ -245,6 +245,7 @@ export class WrapRequest<
 
         this._$ = value;
         this.error = undefined;
+        this.state = isEmpty(value) ? undefined : 'fetched';
 
         if (cacheKey) {
             wrapRequestCache[cacheKey] = this.$;
@@ -269,7 +270,7 @@ export class WrapRequest<
         }
 
         if (!this.fetched) {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(this.when()), 50);
             });
         }
@@ -281,7 +282,7 @@ export class WrapRequest<
         if (key) {
             delete wrapRequestCache[key];
         } else {
-            Object.keys(wrapRequestCache).forEach(key => {
+            Object.keys(wrapRequestCache).forEach((key) => {
                 delete wrapRequestCache[key];
             });
         }
