@@ -71,7 +71,7 @@ test('it should match loading', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: (e) => e,
+            error: (e) => e
         })
     ).toEqual('Loading');
 });
@@ -88,7 +88,7 @@ test('it should match fetched', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: (e) => e,
+            error: (e) => e
         })
     ).toEqual('Fetched');
 });
@@ -105,7 +105,7 @@ test('it should match empty', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: (e) => e,
+            error: (e) => e
         })
     ).toEqual('Empty');
 });
@@ -122,7 +122,7 @@ test('it should match error', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: (e) => e,
+            error: (e) => e
         })
     ).toEqual('Error');
 });
@@ -178,6 +178,21 @@ test('it should fail to transform data', async () => {
     await wrap.request({ id: 1 });
 
     expect(wrap.$).toEqual(undefined);
+});
+
+test('it should transform data with different type', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise<{ content: number[] }>((resolve) =>
+                setTimeout(() => resolve({ content: [1, 2, 3] }), 0)
+            ),
+        { defaultData: [], transform: (res) => res.content || [] }
+    );
+
+    const data = await wrap.request();
+
+    expect(wrap.$).toEqual([1, 2, 3]);
+    expect(data).toEqual([1, 2, 3]);
 });
 
 test('it should cache data', async () => {
@@ -371,7 +386,7 @@ test('it should throw error throwError', async () => {
 
 test('it should set metadata', async () => {
     const wrap = wrapRequest(async () => 5, {
-        metadata: (res) => ({ num: res }),
+        metadata: (res) => ({ num: res })
     });
 
     await wrap.request();
@@ -382,7 +397,7 @@ test('it should set metadata', async () => {
 test('it should get metadata (and ignore the transformed value)', async () => {
     const wrap = wrapRequest(async () => [5], {
         transform: (res) => res[0],
-        metadata: (res) => ({ num: res }),
+        metadata: (res) => ({ num: res })
     });
 
     await wrap.request();
@@ -393,7 +408,7 @@ test('it should get metadata (and ignore the transformed value)', async () => {
 
 test('it should reset metadata', async () => {
     const wrap = wrapRequest(async () => [1, 2, 3], {
-        metadata: (res) => res[0],
+        metadata: (res) => res[0]
     });
 
     await wrap.request();

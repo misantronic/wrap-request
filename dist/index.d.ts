@@ -1,7 +1,7 @@
 export declare type WrapRequestState = 'loading' | 'fetched' | 'error';
 interface WrapRequestOptions<T = any, Y = any, M = any> {
     /** set a default value for `wrapRequest.$` e.g. `[]` */
-    defaultData?: T;
+    defaultData?: T | Y;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
     /** a function which receives the request `$` and returns a new value */
