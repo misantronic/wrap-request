@@ -440,3 +440,14 @@ test('it should reset error', async () => {
 
     expect(wrap.error).toBeUndefined();
 });
+
+test('it should access requestParams', () => {
+    const wrap = wrapRequest(
+        (params: { timeout: number }) =>
+            new Promise((resolve) => setTimeout(resolve, params.timeout))
+    );
+
+    wrap.request({ timeout: 0 });
+
+    expect(wrap.requestParams).toEqual({ timeout: 0 });
+});
