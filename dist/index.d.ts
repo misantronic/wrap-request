@@ -18,10 +18,10 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, 
     error?: Error;
     transform?: (value: T | X) => Y;
     state?: WrapRequestState;
+    requestParams?: U;
     xhr?: Promise<T>;
     private xhrVersion;
     private _metadata?;
-    private params?;
     private options;
     private req;
     constructor(req: (params?: U) => Promise<T>, options?: WrapRequestOptions);

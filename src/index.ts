@@ -44,11 +44,11 @@ export class WrapRequest<
     public error?: Error;
     public transform?: (value: T | X) => Y;
     public state?: WrapRequestState;
+    public requestParams?: U;
     public xhr?: Promise<T>;
-    private xhrVersion = 0;
 
+    private xhrVersion = 0;
     private _metadata?: M;
-    private params?: U;
     private options: WrapRequestOptions = {};
     private req: (params?: U) => Promise<T>;
 
@@ -57,7 +57,7 @@ export class WrapRequest<
         this.options = options || {};
         this.transform = this.options.transform;
 
-        const cacheData = this.getCachedData(this.params);
+        const cacheData = this.getCachedData(this.requestParams);
 
         if (cacheData) {
             this._$ = cacheData;
@@ -108,7 +108,7 @@ export class WrapRequest<
         const cacheKey = this.getCacheKey(params);
         const cacheData = this.getCachedData(params);
 
-        this.params = params;
+        this.requestParams = params;
         this.error = undefined;
 
         try {

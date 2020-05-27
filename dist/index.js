@@ -28,7 +28,7 @@ class WrapRequest {
         this.req = req;
         this.options = options || {};
         this.transform = this.options.transform;
-        const cacheData = this.getCachedData(this.params);
+        const cacheData = this.getCachedData(this.requestParams);
         if (cacheData) {
             this._$ = cacheData;
         }
@@ -63,7 +63,7 @@ class WrapRequest {
         const version = ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
         const cacheData = this.getCachedData(params);
-        this.params = params;
+        this.requestParams = params;
         this.error = undefined;
         try {
             if (cacheData) {
