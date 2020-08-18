@@ -22,7 +22,7 @@
     "homepage": "https://github.com/misantronic/wrap-request#readme",
     "dependencies": {},
     "devDependencies": {
-        "@types/jest": "^25.2.1",
+        "@types/jest": "^26.0.10",
         "jest": "^25.4.0",
         "ts-jest": "^25.4.0",
         "typescript": "^3.8.3"
