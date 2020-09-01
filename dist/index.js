@@ -65,29 +65,28 @@ class WrapRequest {
         const cacheData = this.getCachedData(params);
         this.requestParams = params;
         this.error = undefined;
+        const setFetched = (result) => {
+            this._$ = result;
+            if (this.options.metadata) {
+                this._metadata = this.options.metadata(result);
+            }
+            this.state = 'fetched';
+            if (cacheKey) {
+                wrapRequestCache[cacheKey] = this.$;
+            }
+        };
         try {
             if (cacheData) {
-                this._$ = cacheData;
-                if (this.options.metadata) {
-                    this._metadata = this.options.metadata(cacheData);
-                }
-                this.state = 'fetched';
+                setFetched(cacheData);
             }
             else {
                 if (stateLoading) {
                     this.state = 'loading';
                 }
-            }
-            this.xhr = this.req(params);
-            const result = await this.xhr;
-            if (this.checkXhrVersion(version, stateLoading)) {
-                this._$ = result;
-                if (this.options.metadata) {
-                    this._metadata = this.options.metadata(result);
-                }
-                this.state = 'fetched';
-                if (cacheKey) {
-                    wrapRequestCache[cacheKey] = this.$;
+                this.xhr = this.req(params);
+                const result = await this.xhr;
+                if (this.checkXhrVersion(version, stateLoading)) {
+                    setFetched(result);
                 }
             }
         }
