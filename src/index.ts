@@ -14,6 +14,7 @@ interface WrapRequestOptions<T = any, Y = any, M = any> {
 interface WrapRequestRequestOptions {
     stateLoading?: boolean;
     throwError?: boolean;
+    __ignoreXhrVersion__?: boolean;
 }
 
 /** @see https://stackoverflow.com/a/4994244/1138860 */
@@ -45,7 +46,7 @@ export class WrapRequest<
     public transform?: (value: T | X) => Y;
     public state?: WrapRequestState;
     public requestParams?: U;
-    public xhr?: Promise<T>;
+    public xhr?: Promise<T | X>;
 
     private xhrVersion = 0;
     private _metadata?: M;
@@ -101,10 +102,13 @@ export class WrapRequest<
         params?: U,
         {
             stateLoading = true,
-            throwError = false
+            throwError = false,
+            __ignoreXhrVersion__ = false
         }: WrapRequestRequestOptions = {}
-    ) {
-        const version = ++this.xhrVersion;
+    ): Promise<T | X> {
+        const version = __ignoreXhrVersion__
+            ? this.xhrVersion
+            : ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
         const cacheData = this.getCachedData(params);
 
@@ -139,6 +143,12 @@ export class WrapRequest<
 
                 if (this.checkXhrVersion(version, stateLoading)) {
                     setFetched(result);
+                } else {
+                    return this.request(params, {
+                        stateLoading,
+                        throwError,
+                        __ignoreXhrVersion__: true
+                    });
                 }
             }
         } catch (e) {

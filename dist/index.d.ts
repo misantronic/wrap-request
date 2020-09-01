@@ -12,6 +12,7 @@ interface WrapRequestOptions<T = any, Y = any, M = any> {
 interface WrapRequestRequestOptions {
     stateLoading?: boolean;
     throwError?: boolean;
+    ignoreXhrVersion?: boolean;
 }
 export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, M = any> {
     _$: T | X;
@@ -19,7 +20,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, 
     transform?: (value: T | X) => Y;
     state?: WrapRequestState;
     requestParams?: U;
-    xhr?: Promise<T>;
+    xhr?: Promise<T | X>;
     private xhrVersion;
     private _metadata?;
     private options;
@@ -28,7 +29,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, 
     private getCacheKey;
     private getCachedData;
     private checkXhrVersion;
-    request(params?: U, { stateLoading, throwError }?: WrapRequestRequestOptions): Promise<T | X>;
+    request(params?: U, { stateLoading, throwError, ignoreXhrVersion }?: WrapRequestRequestOptions): Promise<T | X>;
     get $(): T | X;
     set $(value: T | X);
     /** alias for this.$ */
