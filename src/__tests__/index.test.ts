@@ -213,6 +213,23 @@ test('it should cache data', async () => {
     expect(wrap.$).toEqual({ id: 1, name: 'Foo' });
 });
 
+test('it should cache data with transform', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise<Obj>((resolve) =>
+                setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
+            ),
+        { transform: (obj) => obj.name, cacheKey: 'test' }
+    );
+
+    await wrap.request();
+
+    wrap.request();
+
+    expect(wrap.fetched).toBeTruthy();
+    expect(wrap.$).toEqual('Foo');
+});
+
 test('it should cache data with parameters', async () => {
     const wrap = wrapRequest(
         () =>

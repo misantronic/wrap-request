@@ -121,7 +121,7 @@ export class WrapRequest<
             this.state = 'fetched';
 
             if (cacheKey) {
-                wrapRequestCache[cacheKey] = this.$;
+                wrapRequestCache[cacheKey] = this._$;
             }
         };
 
@@ -246,7 +246,7 @@ export class WrapRequest<
         this.state = isEmpty(value) ? undefined : 'fetched';
 
         if (cacheKey) {
-            wrapRequestCache[cacheKey] = this.$;
+            wrapRequestCache[cacheKey] = this._$;
         }
 
         if (this.options.metadata) {
