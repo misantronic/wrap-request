@@ -319,7 +319,7 @@ test('it should always resolve the latest request', async () => {
     await wrap.when();
 
     expect(wrap.error).toBeFalsy();
-    expect(wrap.$).toEqual(25);
+    expect(wrap.$).toEqual(5);
 });
 
 function timeout(timeout: number): Promise<void> {

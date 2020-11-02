@@ -59,8 +59,10 @@ class WrapRequest {
         }
         return this.xhrVersion >= version;
     }
-    async request(params, { stateLoading = true, throwError = false, ignoreXhrVersion = false } = {}) {
-        const version = ignoreXhrVersion ? this.xhrVersion : ++this.xhrVersion;
+    async request(params, { stateLoading = true, throwError = false, __ignoreXhrVersion__ = false } = {}) {
+        const version = __ignoreXhrVersion__
+            ? this.xhrVersion
+            : ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
         const cacheData = this.getCachedData(params);
         this.requestParams = params;
@@ -87,13 +89,6 @@ class WrapRequest {
                 const result = await this.xhr;
                 if (this.checkXhrVersion(version, stateLoading)) {
                     setFetched(result);
-                }
-                else {
-                    return this.request(params, {
-                        stateLoading,
-                        throwError,
-                        ignoreXhrVersion: true
-                    });
                 }
             }
         }

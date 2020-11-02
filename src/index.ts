@@ -143,12 +143,6 @@ export class WrapRequest<
 
                 if (this.checkXhrVersion(version, stateLoading)) {
                     setFetched(result);
-                } else {
-                    return this.request(params, {
-                        stateLoading,
-                        throwError,
-                        __ignoreXhrVersion__: true
-                    });
                 }
             }
         } catch (e) {
