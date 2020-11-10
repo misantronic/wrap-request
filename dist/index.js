@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj) {
@@ -23,8 +32,66 @@ function isEmpty(obj) {
 const wrapRequestCache = {};
 class WrapRequest {
     constructor(req, options) {
-        this.xhrVersion = 0;
-        this.options = {};
+        Object.defineProperty(this, "_$", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "error", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "transform", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "state", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "requestParams", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "xhr", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "xhrVersion", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 0
+        });
+        Object.defineProperty(this, "_metadata", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "options", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: {}
+        });
+        Object.defineProperty(this, "req", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
         this.req = req;
         this.options = options || {};
         this.transform = this.options.transform;
@@ -59,49 +126,51 @@ class WrapRequest {
         }
         return this.xhrVersion >= version;
     }
-    async request(params, { stateLoading = true, throwError = false, __ignoreXhrVersion__ = false } = {}) {
-        const version = __ignoreXhrVersion__
-            ? this.xhrVersion
-            : ++this.xhrVersion;
-        const cacheKey = this.getCacheKey(params);
-        const cacheData = this.getCachedData(params);
-        this.requestParams = params;
-        this.error = undefined;
-        const setFetched = (result) => {
-            this._$ = result;
-            if (this.options.metadata) {
-                this._metadata = this.options.metadata(result);
-            }
-            this.state = 'fetched';
-            if (cacheKey) {
-                wrapRequestCache[cacheKey] = this._$;
-            }
-        };
-        try {
-            if (cacheData) {
-                setFetched(cacheData);
-            }
-            else {
-                if (stateLoading) {
-                    this.state = 'loading';
+    request(params, { stateLoading = true, throwError = false, __ignoreXhrVersion__ = false } = {}) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const version = __ignoreXhrVersion__
+                ? this.xhrVersion
+                : ++this.xhrVersion;
+            const cacheKey = this.getCacheKey(params);
+            const cacheData = this.getCachedData(params);
+            this.requestParams = params;
+            this.error = undefined;
+            const setFetched = (result) => {
+                this._$ = result;
+                if (this.options.metadata) {
+                    this._metadata = this.options.metadata(result);
                 }
-                this.xhr = this.req(params);
-                const result = await this.xhr;
+                this.state = 'fetched';
+                if (cacheKey) {
+                    wrapRequestCache[cacheKey] = this._$;
+                }
+            };
+            try {
+                if (cacheData) {
+                    setFetched(cacheData);
+                }
+                else {
+                    if (stateLoading) {
+                        this.state = 'loading';
+                    }
+                    this.xhr = this.req(params);
+                    const result = yield this.xhr;
+                    if (this.checkXhrVersion(version, stateLoading)) {
+                        setFetched(result);
+                    }
+                }
+            }
+            catch (e) {
                 if (this.checkXhrVersion(version, stateLoading)) {
-                    setFetched(result);
+                    this.error = e;
+                    this.state = 'error';
+                }
+                if (throwError) {
+                    throw e;
                 }
             }
-        }
-        catch (e) {
-            if (this.checkXhrVersion(version, stateLoading)) {
-                this.error = e;
-                this.state = 'error';
-            }
-            if (throwError) {
-                throw e;
-            }
-        }
-        return this.$;
+            return this.$;
+        });
     }
     get $() {
         if (this.transform && this._$) {
@@ -180,16 +249,18 @@ class WrapRequest {
         }
         return null;
     }
-    async when() {
-        if (this.error) {
-            return Promise.reject(this.error);
-        }
-        if (!this.fetched) {
-            return new Promise((resolve) => {
-                setTimeout(() => resolve(this.when()), 50);
-            });
-        }
-        return this.$;
+    when() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.error) {
+                return Promise.reject(this.error);
+            }
+            if (!this.fetched) {
+                return new Promise((resolve) => {
+                    setTimeout(() => resolve(this.when()), 50);
+                });
+            }
+            return this.$;
+        });
     }
     disposeCache(key) {
         if (key) {
