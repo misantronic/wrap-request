@@ -255,9 +255,19 @@ class WrapRequest {
                 return Promise.reject(this.error);
             }
             if (!this.fetched) {
-                return new Promise((resolve) => {
-                    setTimeout(() => resolve(this.when()), 50);
-                });
+                if (this.xhr) {
+                    try {
+                        yield this.xhr;
+                    }
+                    catch (e) {
+                        return this.when();
+                    }
+                }
+                else {
+                    return new Promise((resolve) => {
+                        setTimeout(() => resolve(this.when()), 50);
+                    });
+                }
             }
             return this.$;
         });
