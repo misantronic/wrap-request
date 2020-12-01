@@ -270,7 +270,7 @@ test('it should set default data from cache', async () => {
     expect(wrap2.$).toEqual({ id: 1, name: 'Foo' });
 });
 
-test('it should wait for result with `when`', async () => {
+test('it should wait for result with `when` (request-first)', async () => {
     const wrap = wrapRequest(
         () =>
             new Promise<number>((resolve) => setTimeout(() => resolve(1337), 0))
@@ -284,18 +284,42 @@ test('it should wait for result with `when`', async () => {
     expect(await xhr).toEqual(1337);
 });
 
-test('it should error with `when`', async () => {
+test('it should wait for result with `when` (request-last)', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise<number>((resolve) => setTimeout(() => resolve(1337), 0))
+    );
+
+    const xhr = wrap.when();
+    const request = wrap.request();
+
+    await request;
+
+    expect(await xhr).toEqual(1337);
+});
+
+test('it should error with `when` (request-first)', async () => {
     const wrap = wrapRequest(() => {
         throw new Error('Error');
     });
 
-    await wrap.request();
+    wrap.request();
 
     try {
         await wrap.when();
     } catch (e) {
         expect(e.message).toEqual('Error');
     }
+});
+
+test('it should error with `when` (request-last)', async () => {
+    const wrap = wrapRequest(() => {
+        throw new Error('Error');
+    });
+
+    wrap.when().catch((e) => expect(e.message).toEqual('Error'));
+
+    wrap.request();
 });
 
 test('it should always resolve the latest request', async () => {
