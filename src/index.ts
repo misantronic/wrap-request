@@ -301,12 +301,12 @@ export class WrapRequest<
 
 export function wrapRequest<T = any, U = any, X = undefined, M = any>(
     request: (params: U, options?: WrapRequestRequestOptions) => Promise<T>
-): WrapRequest<T, U, X, T | X, M>;
+): WrapRequest<T, U, X, T, M>;
 
 export function wrapRequest<T = any, U = any, X = T, Y = T, M = any>(
     request: (params: U, options?: WrapRequestRequestOptions) => Promise<T>,
     options?: WrapRequestOptions<T & X, Y, M>
-): WrapRequest<Y, U, Y, Y, Y, M>;
+): WrapRequest<Y, U, Y, Y, T, M>;
 
 /**
  * @param request The request to perform when calling `wrapRequest.request`
@@ -316,5 +316,5 @@ export function wrapRequest<T = any, U = any, X = any, Y = undefined, M = any>(
     request: (params?: U, options?: WrapRequestRequestOptions) => Promise<T>,
     options?: WrapRequestOptions<T & X, Y, M>
 ): WrapRequest<T, U> {
-    return new WrapRequest<T, U, X, Y, M>(request, options);
+    return new WrapRequest<T, U, X, T, M>(request, options);
 }

@@ -492,3 +492,12 @@ test('it should access requestParams', () => {
 
     expect(wrap.requestParams).toEqual({ timeout: 0 });
 });
+
+test('it should access source', async () => {
+    const wrap = wrapRequest(async () => [1], { transform: (data) => data[0] });
+
+    await wrap.request();
+
+    expect(wrap.$).toEqual(1);
+    expect(wrap.source).toEqual([1]);
+});
