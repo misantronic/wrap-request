@@ -482,6 +482,28 @@ test('it should reset error', async () => {
     expect(wrap.error).toBeUndefined();
 });
 
+test('it should reset xhr', async () => {
+    const wrap = wrapRequest(async () => '');
+
+    await wrap.request();
+
+    wrap.reset(undefined);
+
+    expect(wrap.xhr).toBeUndefined();
+});
+
+test('it should reset requestParams', async () => {
+    const wrap = wrapRequest(
+        async (params: { timeout: number }) => params.timeout
+    );
+
+    await wrap.request({ timeout: 0 });
+
+    wrap.reset(undefined);
+
+    expect(wrap.requestParams).toBeUndefined();
+});
+
 test('it should access requestParams', () => {
     const wrap = wrapRequest(
         (params: { timeout: number }) =>

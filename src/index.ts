@@ -247,6 +247,8 @@ export class WrapRequest<
 
         this._$ = value;
         this.error = undefined;
+        this.xhr = undefined;
+        this.requestParams = undefined;
         this.state = isEmpty(value) ? undefined : 'fetched';
 
         if (cacheKey) {
