@@ -453,7 +453,7 @@ test('it should reset', async () => {
 
     await wrap.request();
 
-    wrap.reset(undefined);
+    wrap.reset();
 
     expect(wrap.xhr).toBeUndefined();
 });
