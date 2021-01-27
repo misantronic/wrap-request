@@ -50,7 +50,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, 
         empty?(): any;
         error?(e: Error): any;
     }): any;
-    reset(value: T | X, params?: U): void;
+    reset(value?: T | X, params?: U): void;
     didFetch<R = any>(cb: ($: T) => R): R | null;
     when(): Promise<T>;
     disposeCache(key?: string): void;

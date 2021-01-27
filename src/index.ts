@@ -242,10 +242,10 @@ export class WrapRequest<
         return null;
     }
 
-    public reset(value: T | X, params?: U) {
+    public reset(value?: T | X, params?: U) {
         const cacheKey = this.getCacheKey(params);
 
-        this._$ = value;
+        this._$ = value as T | X;
         this.error = undefined;
         this.xhr = undefined;
         this.requestParams = undefined;

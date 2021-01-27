@@ -448,6 +448,16 @@ test('it should get metadata (and ignore the transformed value)', async () => {
     expect(wrap.metadata!.num).toEqual([5]);
 });
 
+test('it should reset', async () => {
+    const wrap = wrapRequest(async () => '', {});
+
+    await wrap.request();
+
+    wrap.reset(undefined);
+
+    expect(wrap.xhr).toBeUndefined();
+});
+
 test('it should reset metadata', async () => {
     const wrap = wrapRequest(async () => [1, 2, 3], {
         metadata: (res) => res[0]
