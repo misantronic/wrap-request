@@ -31,7 +31,17 @@ function isEmpty(obj: any): boolean {
     return true;
 }
 
-const wrapRequestCache: { [key: string]: any } = {};
+let wrapRequestCache: { [key: string]: any } = {};
+
+export const __wrapRequestDebug__ = {
+    cache: {
+        clear: () => {
+            wrapRequestCache = {};
+        },
+        contents: wrapRequestCache
+    },
+    wrapRequests: [] as WrapRequest[]
+};
 
 export class WrapRequest<
     T = any,
@@ -65,6 +75,8 @@ export class WrapRequest<
         } else if (this.options.defaultData) {
             this._$ = this.options.defaultData;
         }
+
+        __wrapRequestDebug__.wrapRequests.push(this);
     }
 
     private getCacheKey(params?: U) {
@@ -294,9 +306,7 @@ export class WrapRequest<
         if (key) {
             delete wrapRequestCache[key];
         } else {
-            Object.keys(wrapRequestCache).forEach((key) => {
-                delete wrapRequestCache[key];
-            });
+            wrapRequestCache = {};
         }
     }
 }
