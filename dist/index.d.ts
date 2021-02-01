@@ -14,6 +14,15 @@ interface WrapRequestRequestOptions {
     throwError?: boolean;
     __ignoreXhrVersion__?: boolean;
 }
+export declare const __wrapRequestDebug__: {
+    cache: {
+        clear: () => void;
+        contents: {
+            [key: string]: any;
+        };
+    };
+    wrapRequests: WrapRequest<any, any, any, any, any, any>[];
+};
 export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, M = any> {
     _$: T | X;
     error?: Error;
