@@ -17,7 +17,10 @@ interface RequestOptions {
     __ignoreXhrVersion__?: boolean;
 }
 
-type RequestFn<T, U> = (params: U) => Promise<T>;
+type RequestFn<T, U, X, Y, Z, M = any> = (
+    params: U,
+    context: WrapRequest<T, U, X, Y, Z, M>
+) => Promise<T>;
 
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj: any): boolean {
@@ -63,9 +66,9 @@ export class WrapRequest<
     private xhrVersion = 0;
     private _metadata?: M;
     private options: Options = {};
-    private req: RequestFn<T, U>;
+    private req: RequestFn<T, U, X, Y, Z, M>;
 
-    constructor(req: RequestFn<T, U>, options?: Options) {
+    constructor(req: RequestFn<T, U, X, Y, Z, M>, options?: Options) {
         this.req = req;
         this.options = options || {};
         this.transform = this.options.transform;
@@ -151,7 +154,7 @@ export class WrapRequest<
                     this.state = 'loading';
                 }
 
-                this.xhr = this.req(params as U);
+                this.xhr = this.req(params as U, this);
 
                 const result = await this.xhr;
 
@@ -314,11 +317,11 @@ export class WrapRequest<
 }
 
 export function wrapRequest<T = any, U = any, X = undefined, M = any>(
-    request: RequestFn<T, U>
+    request: RequestFn<T, U, X, T, M>
 ): WrapRequest<T, U, X, T, M>;
 
 export function wrapRequest<T = any, U = any, X = T, Y = T, M = any>(
-    request: RequestFn<T, U>,
+    request: RequestFn<Y, U, Y, Y, T, M>,
     options?: Options<T & X, Y, M>
 ): WrapRequest<Y, U, Y, Y, T, M>;
 
@@ -327,7 +330,7 @@ export function wrapRequest<T = any, U = any, X = T, Y = T, M = any>(
  * @param options {Options}
  */
 export function wrapRequest<T = any, U = any, X = any, Y = undefined, M = any>(
-    request: RequestFn<T, U>,
+    request: RequestFn<T, U, X, T, M>,
     options?: Options<T & X, Y, M>
 ): WrapRequest<T, U> {
     return new WrapRequest<T, U, X, T, M>(request, options);

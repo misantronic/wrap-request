@@ -14,7 +14,7 @@ interface RequestOptions {
     throwError?: boolean;
     __ignoreXhrVersion__?: boolean;
 }
-declare type RequestFn<T, U> = (params: U) => Promise<T>;
+declare type RequestFn<T, U, X, Y, Z, M = any> = (params: U, context: WrapRequest<T, U, X, Y, Z, M>) => Promise<T>;
 export declare const __wrapRequestDebug__: {
     cache: {
         clear: () => void;
@@ -35,7 +35,7 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, 
     private _metadata?;
     private options;
     private req;
-    constructor(req: RequestFn<T, U>, options?: Options);
+    constructor(req: RequestFn<T, U, X, Y, Z, M>, options?: Options);
     private getCacheKey;
     private getCachedData;
     private checkXhrVersion;
@@ -65,6 +65,6 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, 
     when(): Promise<T>;
     disposeCache(key?: string): void;
 }
-export declare function wrapRequest<T = any, U = any, X = undefined, M = any>(request: RequestFn<T, U>): WrapRequest<T, U, X, T, M>;
-export declare function wrapRequest<T = any, U = any, X = T, Y = T, M = any>(request: RequestFn<T, U>, options?: Options<T & X, Y, M>): WrapRequest<Y, U, Y, Y, T, M>;
+export declare function wrapRequest<T = any, U = any, X = undefined, M = any>(request: RequestFn<T, U, X, T, M>): WrapRequest<T, U, X, T, M>;
+export declare function wrapRequest<T = any, U = any, X = T, Y = T, M = any>(request: RequestFn<Y, U, Y, Y, T, M>, options?: Options<T & X, Y, M>): WrapRequest<Y, U, Y, Y, T, M>;
 export {};

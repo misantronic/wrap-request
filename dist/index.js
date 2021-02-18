@@ -163,7 +163,7 @@ class WrapRequest {
                     if (stateLoading) {
                         this.state = 'loading';
                     }
-                    this.xhr = this.req(params);
+                    this.xhr = this.req(params, this);
                     const result = yield this.xhr;
                     if (this.checkXhrVersion(version, stateLoading)) {
                         setFetched(result);

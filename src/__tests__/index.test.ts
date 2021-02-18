@@ -532,3 +532,19 @@ test('it should access source', async () => {
     expect(wrap.$).toEqual(1);
     expect(wrap.source).toEqual([1]);
 });
+
+test('it should access context', async () => {
+    const wrap = wrapRequest<number>(
+        async (params: { increase: number }, context) => {
+            const prevValue = context.$ || 0;
+
+            return prevValue + params.increase;
+        }
+    );
+
+    await wrap.request({ increase: 1 });
+    await wrap.request({ increase: 2 });
+    await wrap.request({ increase: 3 });
+
+    expect(wrap.$).toEqual(6);
+});
