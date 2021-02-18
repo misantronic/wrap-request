@@ -29,13 +29,13 @@ function isEmpty(obj) {
     }
     return true;
 }
-let wrapRequestCache = {};
+let cache = {};
 exports.__wrapRequestDebug__ = {
     cache: {
         clear: () => {
-            wrapRequestCache = {};
+            cache = {};
         },
-        contents: wrapRequestCache
+        contents: cache
     },
     wrapRequests: []
 };
@@ -125,8 +125,8 @@ class WrapRequest {
     }
     getCachedData(params) {
         const cacheKey = this.getCacheKey(params);
-        if (cacheKey && wrapRequestCache[cacheKey]) {
-            return wrapRequestCache[cacheKey];
+        if (cacheKey && cache[cacheKey]) {
+            return cache[cacheKey];
         }
         return undefined;
     }
@@ -152,7 +152,7 @@ class WrapRequest {
                 }
                 this.state = 'fetched';
                 if (cacheKey) {
-                    wrapRequestCache[cacheKey] = this._$;
+                    cache[cacheKey] = this._$;
                 }
             };
             try {
@@ -249,7 +249,7 @@ class WrapRequest {
         this.requestParams = undefined;
         this.state = isEmpty(value) ? undefined : 'fetched';
         if (cacheKey) {
-            wrapRequestCache[cacheKey] = this._$;
+            cache[cacheKey] = this._$;
         }
         if (this.options.metadata) {
             this._metadata = this.options.metadata(value);
@@ -286,17 +286,17 @@ class WrapRequest {
     }
     disposeCache(key) {
         if (key) {
-            delete wrapRequestCache[key];
+            delete cache[key];
         }
         else {
-            wrapRequestCache = {};
+            cache = {};
         }
     }
 }
 exports.WrapRequest = WrapRequest;
 /**
  * @param request The request to perform when calling `wrapRequest.request`
- * @param options {WrapRequestOptions}
+ * @param options {Options}
  */
 function wrapRequest(request, options) {
     return new WrapRequest(request, options);
