@@ -1,6 +1,6 @@
 {
     "name": "wrap-request",
-    "version": "5.0.0",
+    "version": "5.0.1",
     "description": "a request wrapper for asynchronous operations",
     "main": "dist/index.js",
     "scripts": {
