@@ -239,7 +239,7 @@ test('it should cache data with parameters', async () => {
         { cacheKey: 'test' }
     );
 
-    await wrap.request({ id: 1 });
+    await wrap.request();
 
     wrap.request();
 
@@ -256,7 +256,7 @@ test('it should set default data from cache', async () => {
         { cacheKey: 'test' }
     );
 
-    await wrap.request({ id: 1 });
+    await wrap.request();
 
     const wrap2 = wrapRequest(
         () =>
@@ -401,7 +401,7 @@ test('it should not throw error without throwError', async () => {
 
     let error;
     try {
-        await wrap.request({});
+        await wrap.request();
     } catch (e) {
         error = e;
     }
@@ -507,7 +507,7 @@ test('it should reset requestParams', async () => {
         async (params: { timeout: number }) => params.timeout
     );
 
-    await wrap.request({ timeout: 0 });
+    await wrap.request({ timeout: 1 });
 
     wrap.reset(undefined);
 

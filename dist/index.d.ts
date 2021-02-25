@@ -40,7 +40,7 @@ export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     private getCacheKey;
     private getCachedData;
     private checkXhrVersion;
-    request(params?: P, { stateLoading, throwError, __ignoreXhrVersion__ }?: RequestOptions): Promise<RESULT<$, $$>>;
+    request(...[params, options]: P extends undefined ? [undefined?, RequestOptions?] : [P, RequestOptions?]): Promise<RESULT<$, $$>>;
     get $(): RESULT<$, $$>;
     /** alias for this.$ */
     get result(): RESULT<$, $$>;

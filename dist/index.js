@@ -131,8 +131,12 @@ class WrapRequest {
         }
         return this.xhrVersion >= version;
     }
-    request(params, { stateLoading = true, throwError = false, __ignoreXhrVersion__ = false } = {}) {
+    request(...[params, options]) {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            const stateLoading = (_a = options === null || options === void 0 ? void 0 : options.stateLoading) !== null && _a !== void 0 ? _a : true;
+            const throwError = (_b = options === null || options === void 0 ? void 0 : options.throwError) !== null && _b !== void 0 ? _b : false;
+            const __ignoreXhrVersion__ = (_c = options === null || options === void 0 ? void 0 : options.__ignoreXhrVersion__) !== null && _c !== void 0 ? _c : false;
             const version = __ignoreXhrVersion__
                 ? this.xhrVersion
                 : ++this.xhrVersion;

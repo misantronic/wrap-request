@@ -107,13 +107,14 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     }
 
     public async request(
-        params?: P,
-        {
-            stateLoading = true,
-            throwError = false,
-            __ignoreXhrVersion__ = false
-        }: RequestOptions = {}
+        ...[params, options]: P extends undefined
+            ? [undefined?, RequestOptions?]
+            : [P, RequestOptions?]
     ) {
+        const stateLoading = options?.stateLoading ?? true;
+        const throwError = options?.throwError ?? false;
+        const __ignoreXhrVersion__ = options?.__ignoreXhrVersion__ ?? false;
+
         const version = __ignoreXhrVersion__
             ? this.xhrVersion
             : ++this.xhrVersion;
