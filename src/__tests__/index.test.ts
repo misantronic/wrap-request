@@ -29,7 +29,8 @@ test('it should set fetched state', async () => {
 
 test('it should set data', async () => {
     const wrap = wrapRequest(
-        () => new Promise((resolve) => setTimeout(() => resolve(1337), 0))
+        () =>
+            new Promise<number>((resolve) => setTimeout(() => resolve(1337), 0))
     );
 
     const data = await wrap.request();
@@ -160,7 +161,7 @@ test('it should transform data', async () => {
         { defaultData: [], transform: (res) => res[0] }
     );
 
-    const data = await wrap.request({ id: 1 });
+    const data = await wrap.request();
 
     expect(wrap.$).toEqual({ id: 1, name: 'Foo' });
     expect(data).toEqual({ id: 1, name: 'Foo' });
@@ -172,10 +173,10 @@ test('it should fail to transform data', async () => {
             new Promise<Obj[]>((_, reject) =>
                 setTimeout(() => reject('Error'), 0)
             ),
-        { transform: (res) => res[0] }
+        { transform: (res) => res?.[0] }
     );
 
-    await wrap.request({ id: 1 });
+    await wrap.request();
 
     expect(wrap.$).toEqual(undefined);
 });
@@ -438,13 +439,13 @@ test('it should set metadata', async () => {
 test('it should get metadata (and ignore the transformed value)', async () => {
     const wrap = wrapRequest(async () => [5], {
         transform: (res) => res[0],
-        metadata: (res) => ({ num: res })
+        metadata: (res) => ({ num: res[0] })
     });
 
     await wrap.request();
 
     expect(wrap.$).toEqual(5);
-    expect(wrap.metadata!.num).toEqual([5]);
+    expect(wrap.metadata!.num).toEqual(5);
 });
 
 test('it should reset', async () => {

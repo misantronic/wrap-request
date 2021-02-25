@@ -1,14 +1,14 @@
 export type WrapRequestState = 'loading' | 'fetched' | 'error';
 
-interface Options<T = any, Y = any, M = any> {
+interface Options<$, $$, MD> {
     /** set a default value for `wrapRequest.$` e.g. `[]` */
-    defaultData?: Y | T;
+    defaultData?: any;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
     /** a function which receives the request `$` and returns a new value */
-    transform?: ($: T) => Y;
+    transform?: ($: $) => $$;
     /** a function which return value will be set as metadata */
-    metadata?: ($: T) => M;
+    metadata?: ($: $) => MD;
 }
 
 interface RequestOptions {
@@ -17,10 +17,10 @@ interface RequestOptions {
     __ignoreXhrVersion__?: boolean;
 }
 
-type RequestFn<T, U, X, Y, Z, M = any> = (
-    params: U,
-    context: WrapRequest<T, U, X, Y, Z, M>
-) => Promise<T>;
+type RequestFn<$, $$, P, MD> = (
+    params: P,
+    context: WrapRequest<$, $$, P, MD>
+) => Promise<$>;
 
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj: any): boolean {
@@ -48,43 +48,34 @@ export const __wrapRequestDebug__ = {
     wrapRequests: [] as WrapRequest[]
 };
 
-export class WrapRequest<
-    T = any,
-    U = any,
-    X = any,
-    Y = any,
-    Z = T | X,
-    M = any
-> {
-    public _$!: T | X;
+type RESULT<$, $$> = $$ extends any ? $$ : $;
+
+export class WrapRequest<$ = any, $$ = any, P = any, MD = any> {
+    public _$!: $;
     public error?: Error;
-    public transform?: (value: T | X) => Y;
+    public transform?: (value: $) => $$;
     public state?: WrapRequestState;
-    public requestParams?: U;
-    public xhr?: Promise<T | X>;
+    public requestParams?: P;
+    public xhr?: Promise<$>;
 
     private xhrVersion = 0;
-    private _metadata?: M;
-    private options: Options = {};
-    private req: RequestFn<T, U, X, Y, Z, M>;
+    private _metadata?: MD;
+    private options: Options<$, $$, MD> = {};
+    private req: RequestFn<$, $$, P, MD>;
 
-    constructor(req: RequestFn<T, U, X, Y, Z, M>, options?: Options) {
+    constructor(req: RequestFn<$, $$, P, MD>, options?: Options<$, $$, MD>) {
         this.req = req;
         this.options = options || {};
         this.transform = this.options.transform;
 
         const cacheData = this.getCachedData(this.requestParams);
 
-        if (cacheData) {
-            this._$ = cacheData;
-        } else if (this.options.defaultData) {
-            this._$ = this.options.defaultData;
-        }
+        this._$ = cacheData || (this.options.defaultData as any);
 
         __wrapRequestDebug__.wrapRequests.push(this);
     }
 
-    private getCacheKey(params?: U) {
+    private getCacheKey(params?: P) {
         const { cacheKey } = this.options;
 
         if (!cacheKey) {
@@ -98,7 +89,7 @@ export class WrapRequest<
         return cacheKey;
     }
 
-    private getCachedData(params?: U): (T | X) | undefined {
+    private getCachedData(params?: P): $ | undefined {
         const cacheKey = this.getCacheKey(params);
 
         if (cacheKey && cache[cacheKey]) {
@@ -116,13 +107,13 @@ export class WrapRequest<
     }
 
     public async request(
-        params?: U,
+        params?: P,
         {
             stateLoading = true,
             throwError = false,
             __ignoreXhrVersion__ = false
         }: RequestOptions = {}
-    ): Promise<T | X> {
+    ) {
         const version = __ignoreXhrVersion__
             ? this.xhrVersion
             : ++this.xhrVersion;
@@ -132,7 +123,7 @@ export class WrapRequest<
         this.requestParams = params;
         this.error = undefined;
 
-        const setFetched = (result: T | X) => {
+        const setFetched = (result: $) => {
             this._$ = result;
 
             if (this.options.metadata) {
@@ -154,7 +145,7 @@ export class WrapRequest<
                     this.state = 'loading';
                 }
 
-                this.xhr = this.req(params as U, this);
+                this.xhr = this.req(params as P, this);
 
                 const result = await this.xhr;
 
@@ -175,16 +166,8 @@ export class WrapRequest<
         return this.$;
     }
 
-    public get $(): T | X {
-        if (this.transform && this._$) {
-            return this.transform(this._$) as any;
-        }
-
-        return this._$;
-    }
-
-    public set $(value: T | X) {
-        this.reset(value);
+    public get $(): RESULT<$, $$> {
+        return (this.transform?.(this._$) || this._$) as RESULT<$, $$>;
     }
 
     /** alias for this.$ */
@@ -192,13 +175,8 @@ export class WrapRequest<
         return this.$;
     }
 
-    /** alias for this.$ */
-    public set result(value: T | X) {
-        this.$ = value;
-    }
-
-    public get source(): Z {
-        return this._$ as any;
+    public get source(): $ {
+        return this._$;
     }
 
     public get metadata() {
@@ -232,7 +210,7 @@ export class WrapRequest<
     public match(handlers: {
         default?(): any;
         loading?(): any;
-        fetched?(value: T): any;
+        fetched?(value: RESULT<$, $$>): any;
         empty?(): any;
         error?(e: Error): any;
     }) {
@@ -249,7 +227,7 @@ export class WrapRequest<
         }
 
         if (this.fetched && handlers.fetched) {
-            return handlers.fetched(this.$ as T);
+            return handlers.fetched(this.$);
         }
 
         if (handlers.default) {
@@ -259,10 +237,10 @@ export class WrapRequest<
         return null;
     }
 
-    public reset(value?: T | X, params?: U) {
+    public reset(value?: $, params?: P) {
         const cacheKey = this.getCacheKey(params);
 
-        this._$ = value as T | X;
+        this._$ = value as $;
         this.error = undefined;
         this.xhr = undefined;
         this.requestParams = undefined;
@@ -272,20 +250,20 @@ export class WrapRequest<
             cache[cacheKey] = this._$;
         }
 
-        if (this.options.metadata) {
+        if (this.options.metadata && value) {
             this._metadata = this.options.metadata(value);
         }
     }
 
-    public didFetch<R = any>(cb: ($: T) => R) {
+    public didFetch<T = any>(cb: ($: RESULT<$, $$>) => T) {
         if (this.fetched) {
-            return cb(this.$ as T);
+            return cb(this.$);
         }
 
         return null;
     }
 
-    public async when(): Promise<T> {
+    public async when(): Promise<RESULT<$, $$>> {
         if (this.error) {
             return Promise.reject(this.error);
         }
@@ -304,7 +282,7 @@ export class WrapRequest<
             }
         }
 
-        return this.$ as T;
+        return this.$;
     }
 
     public disposeCache(key?: string) {
@@ -316,22 +294,15 @@ export class WrapRequest<
     }
 }
 
-export function wrapRequest<T = any, U = any, X = undefined, M = any>(
-    request: RequestFn<T, U, X, T, M>
-): WrapRequest<T, U, X, T, M>;
-
-export function wrapRequest<T = any, U = any, X = T, Y = T, M = any>(
-    request: RequestFn<Y, U, Y, Y, T, M>,
-    options?: Options<T & X, Y, M>
-): WrapRequest<Y, U, Y, Y, T, M>;
-
 /**
  * @param request The request to perform when calling `wrapRequest.request`
  * @param options {Options}
  */
-export function wrapRequest<T = any, U = any, X = any, Y = undefined, M = any>(
-    request: RequestFn<T, U, X, T, M>,
-    options?: Options<T & X, Y, M>
-): WrapRequest<T, U> {
-    return new WrapRequest<T, U, X, T, M>(request, options);
+export function wrapRequest<
+    $ /* result */,
+    $$ = $ /* transformed result */,
+    P = any /* request-parameters */,
+    MD = any /* meta-data */
+>(request: RequestFn<$, $$, P, MD>, options?: Options<$, $$, MD>) {
+    return new WrapRequest<$, $$, P, MD>(request, options);
 }
