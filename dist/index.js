@@ -105,12 +105,7 @@ class WrapRequest {
         this.options = options || {};
         this.transform = this.options.transform;
         const cacheData = this.getCachedData(this.requestParams);
-        if (cacheData) {
-            this._$ = cacheData;
-        }
-        else if (this.options.defaultData) {
-            this._$ = this.options.defaultData;
-        }
+        this._$ = cacheData || this.options.defaultData;
         exports.__wrapRequestDebug__.wrapRequests.push(this);
     }
     getCacheKey(params) {
@@ -183,21 +178,12 @@ class WrapRequest {
         });
     }
     get $() {
-        if (this.transform && this._$) {
-            return this.transform(this._$);
-        }
-        return this._$;
-    }
-    set $(value) {
-        this.reset(value);
+        var _a;
+        return (((_a = this.transform) === null || _a === void 0 ? void 0 : _a.call(this, this._$)) || this._$);
     }
     /** alias for this.$ */
     get result() {
         return this.$;
-    }
-    /** alias for this.$ */
-    set result(value) {
-        this.$ = value;
     }
     get source() {
         return this._$;
@@ -251,7 +237,7 @@ class WrapRequest {
         if (cacheKey) {
             cache[cacheKey] = this._$;
         }
-        if (this.options.metadata) {
+        if (this.options.metadata && value) {
             this._metadata = this.options.metadata(value);
         }
     }

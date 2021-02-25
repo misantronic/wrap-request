@@ -1,20 +1,20 @@
 export declare type WrapRequestState = 'loading' | 'fetched' | 'error';
-interface Options<T = any, Y = any, M = any> {
+interface Options<$, $$, MD> {
     /** set a default value for `wrapRequest.$` e.g. `[]` */
-    defaultData?: Y | T;
+    defaultData?: any;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
     /** a function which receives the request `$` and returns a new value */
-    transform?: ($: T) => Y;
+    transform?: ($: $) => $$;
     /** a function which return value will be set as metadata */
-    metadata?: ($: T) => M;
+    metadata?: ($: $) => MD;
 }
 interface RequestOptions {
     stateLoading?: boolean;
     throwError?: boolean;
     __ignoreXhrVersion__?: boolean;
 }
-declare type RequestFn<T, U, X, Y, Z, M = any> = (params: U, context: WrapRequest<T, U, X, Y, Z, M>) => Promise<T>;
+declare type RequestFn<$, $$, P, MD> = (params: P, context: WrapRequest<$, $$, P, MD>) => Promise<$>;
 export declare const __wrapRequestDebug__: {
     cache: {
         clear: () => void;
@@ -22,32 +22,30 @@ export declare const __wrapRequestDebug__: {
             [key: string]: any;
         };
     };
-    wrapRequests: WrapRequest<any, any, any, any, any, any>[];
+    wrapRequests: WrapRequest<any, any, any, any>[];
 };
-export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, M = any> {
-    _$: T | X;
+declare type RESULT<$, $$> = $$ extends any ? $$ : $;
+export declare class WrapRequest<$ = any, $$ = any, P = any, MD = any> {
+    _$: $;
     error?: Error;
-    transform?: (value: T | X) => Y;
+    transform?: (value: $) => $$;
     state?: WrapRequestState;
-    requestParams?: U;
-    xhr?: Promise<T | X>;
+    requestParams?: P;
+    xhr?: Promise<$>;
     private xhrVersion;
     private _metadata?;
     private options;
     private req;
-    constructor(req: RequestFn<T, U, X, Y, Z, M>, options?: Options);
+    constructor(req: RequestFn<$, $$, P, MD>, options?: Options<$, $$, MD>);
     private getCacheKey;
     private getCachedData;
     private checkXhrVersion;
-    request(params?: U, { stateLoading, throwError, __ignoreXhrVersion__ }?: RequestOptions): Promise<T | X>;
-    get $(): T | X;
-    set $(value: T | X);
+    request(params?: P, { stateLoading, throwError, __ignoreXhrVersion__ }?: RequestOptions): Promise<RESULT<$, $$>>;
+    get $(): RESULT<$, $$>;
     /** alias for this.$ */
-    get result(): T | X;
-    /** alias for this.$ */
-    set result(value: T | X);
-    get source(): Z;
-    get metadata(): M | undefined;
+    get result(): RESULT<$, $$>;
+    get source(): $;
+    get metadata(): MD | undefined;
     get loading(): boolean;
     set loading(value: boolean);
     get fetched(): boolean;
@@ -56,15 +54,18 @@ export declare class WrapRequest<T = any, U = any, X = any, Y = any, Z = T | X, 
     match(handlers: {
         default?(): any;
         loading?(): any;
-        fetched?(value: T): any;
+        fetched?(value: RESULT<$, $$>): any;
         empty?(): any;
         error?(e: Error): any;
     }): any;
-    reset(value?: T | X, params?: U): void;
-    didFetch<R = any>(cb: ($: T) => R): R | null;
-    when(): Promise<T>;
+    reset(value?: $, params?: P): void;
+    didFetch<T = any>(cb: ($: RESULT<$, $$>) => T): T | null;
+    when(): Promise<RESULT<$, $$>>;
     disposeCache(key?: string): void;
 }
-export declare function wrapRequest<T = any, U = any, X = undefined, M = any>(request: RequestFn<T, U, X, T, M>): WrapRequest<T, U, X, T, M>;
-export declare function wrapRequest<T = any, U = any, X = T, Y = T, M = any>(request: RequestFn<Y, U, Y, Y, T, M>, options?: Options<T & X, Y, M>): WrapRequest<Y, U, Y, Y, T, M>;
+/**
+ * @param request The request to perform when calling `wrapRequest.request`
+ * @param options {Options}
+ */
+export declare function wrapRequest<$, $$ = $, P = any, MD = any>(request: RequestFn<$, $$, P, MD>, options?: Options<$, $$, MD>): WrapRequest<$, $$, P, MD>;
 export {};
