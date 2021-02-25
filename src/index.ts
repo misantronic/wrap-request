@@ -113,7 +113,7 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
             throwError = false,
             __ignoreXhrVersion__ = false
         }: RequestOptions = {}
-    ): Promise<RESULT<$, $$> | undefined> {
+    ) {
         const version = __ignoreXhrVersion__
             ? this.xhrVersion
             : ++this.xhrVersion;
