@@ -50,7 +50,7 @@ export const __wrapRequestDebug__ = {
 
 type RESULT<$, $$> = $$ extends any ? $$ : $;
 
-export class WrapRequest<$ = any, $$ = any, P = any, MD = any> {
+export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     public _$!: $;
     public error?: Error;
     public transform?: (value: $) => $$;
@@ -113,7 +113,7 @@ export class WrapRequest<$ = any, $$ = any, P = any, MD = any> {
             throwError = false,
             __ignoreXhrVersion__ = false
         }: RequestOptions = {}
-    ) {
+    ): Promise<RESULT<$, $$> | undefined> {
         const version = __ignoreXhrVersion__
             ? this.xhrVersion
             : ++this.xhrVersion;

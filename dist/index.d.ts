@@ -25,7 +25,7 @@ export declare const __wrapRequestDebug__: {
     wrapRequests: WrapRequest<any, any, any, any>[];
 };
 declare type RESULT<$, $$> = $$ extends any ? $$ : $;
-export declare class WrapRequest<$ = any, $$ = any, P = any, MD = any> {
+export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     _$: $;
     error?: Error;
     transform?: (value: $) => $$;
@@ -40,7 +40,7 @@ export declare class WrapRequest<$ = any, $$ = any, P = any, MD = any> {
     private getCacheKey;
     private getCachedData;
     private checkXhrVersion;
-    request(params?: P, { stateLoading, throwError, __ignoreXhrVersion__ }?: RequestOptions): Promise<RESULT<$, $$>>;
+    request(params?: P, { stateLoading, throwError, __ignoreXhrVersion__ }?: RequestOptions): Promise<RESULT<$, $$> | undefined>;
     get $(): RESULT<$, $$>;
     /** alias for this.$ */
     get result(): RESULT<$, $$>;
