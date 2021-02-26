@@ -27,7 +27,7 @@
         "jest": "^25.4.0",
         "standard-version": "^9.1.1",
         "ts-jest": "^25.4.0",
-        "typescript": "^3.8.3"
+        "typescript": "^3.9.9"
     },
     "jest": {
         "testPathIgnorePatterns": [
