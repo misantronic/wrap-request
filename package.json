@@ -6,7 +6,7 @@
     "scripts": {
         "start": "npm test && tsc -p . && rm -rf dist/__tests__",
         "test": "jest",
-        "release": "standard-version"
+        "release": "standard-version && git push && npm publish"
     },
     "repository": {
         "type": "git",
