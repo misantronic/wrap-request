@@ -152,6 +152,19 @@ test('it should set default data', async () => {
     expect(wrap.$).toEqual([]);
 });
 
+test('it should set default data when request errors', async () => {
+    const wrap = wrapRequest(
+        async (): Promise<any[]> => {
+            throw new Error('Error');
+        },
+        { defaultData: [], transform: (data) => data.filter((x) => x) }
+    );
+
+    await wrap.request();
+
+    expect(wrap.$).toEqual([]);
+});
+
 test('it should transform data', async () => {
     const wrap = wrapRequest(
         () =>
