@@ -11,17 +11,14 @@ interface Options<$, $$, MD> {
     metadata?: ($: $) => MD;
 }
 
-interface RequestOptions<$, $$, P, MD> {
+interface RequestOptions {
     stateLoading?: boolean;
     throwError?: boolean;
-    context: WrapRequest<$, $$, P, MD>;
+    context: WrapRequest;
     __ignoreXhrVersion__?: boolean;
 }
 
-type RequestFn<$, $$, P, MD> = (
-    params: P,
-    options: RequestOptions<$, $$, P, MD>
-) => Promise<$>;
+type RequestFn<$, P> = (params: P, options: RequestOptions) => Promise<$>;
 
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj: any): boolean {
@@ -62,9 +59,9 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     private xhrVersion = 0;
     private _metadata?: MD;
     private options: Options<$, $$, MD> = {};
-    private req: RequestFn<$, $$, P, MD>;
+    private req: RequestFn<$, P>;
 
-    constructor(req: RequestFn<$, $$, P, MD>, options?: Options<$, $$, MD>) {
+    constructor(req: RequestFn<$, P>, options?: Options<$, $$, MD>) {
         this.req = req;
         this.options = options || {};
         this.transform = this.options.transform;
@@ -109,8 +106,8 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
 
     public async request(
         ...[params, options]: P extends undefined
-            ? [undefined?, Omit<RequestOptions<$, $$, P, MD>, 'context'>?]
-            : [P, Omit<RequestOptions<$, $$, P, MD>, 'context'>?]
+            ? [undefined?, Omit<RequestOptions, 'context'>?]
+            : [P, Omit<RequestOptions, 'context'>?]
     ) {
         const stateLoading = options?.stateLoading ?? true;
         const throwError = options?.throwError ?? false;
@@ -305,6 +302,6 @@ export function wrapRequest<
     $$ = $ /* transformed result */,
     P = any /* request-parameters */,
     MD = any /* meta-data */
->(request: RequestFn<$, $$, P, MD>, options?: Options<$, $$, MD>) {
+>(request: RequestFn<$, P>, options?: Options<$, $$, MD>) {
     return new WrapRequest<$, $$, P, MD>(request, options);
 }

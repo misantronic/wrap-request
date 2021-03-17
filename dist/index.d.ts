@@ -9,13 +9,13 @@ interface Options<$, $$, MD> {
     /** a function which return value will be set as metadata */
     metadata?: ($: $) => MD;
 }
-interface RequestOptions<$, $$, P, MD> {
+interface RequestOptions {
     stateLoading?: boolean;
     throwError?: boolean;
-    context: WrapRequest<$, $$, P, MD>;
+    context: WrapRequest;
     __ignoreXhrVersion__?: boolean;
 }
-declare type RequestFn<$, $$, P, MD> = (params: P, options: RequestOptions<$, $$, P, MD>) => Promise<$>;
+declare type RequestFn<$, P> = (params: P, options: RequestOptions) => Promise<$>;
 export declare const __wrapRequestDebug__: {
     cache: {
         clear: () => void;
@@ -37,11 +37,11 @@ export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     private _metadata?;
     private options;
     private req;
-    constructor(req: RequestFn<$, $$, P, MD>, options?: Options<$, $$, MD>);
+    constructor(req: RequestFn<$, P>, options?: Options<$, $$, MD>);
     private getCacheKey;
     private getCachedData;
     private checkXhrVersion;
-    request(...[params, options]: P extends undefined ? [undefined?, Omit<RequestOptions<$, $$, P, MD>, 'context'>?] : [P, Omit<RequestOptions<$, $$, P, MD>, 'context'>?]): Promise<RESULT<$, $$>>;
+    request(...[params, options]: P extends undefined ? [undefined?, Omit<RequestOptions, 'context'>?] : [P, Omit<RequestOptions, 'context'>?]): Promise<RESULT<$, $$>>;
     get $(): RESULT<$, $$>;
     /** alias for this.$ */
     get result(): RESULT<$, $$>;
@@ -68,5 +68,5 @@ export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
  * @param request The request to perform when calling `wrapRequest.request`
  * @param options {Options}
  */
-export declare function wrapRequest<$, $$ = $, P = any, MD = any>(request: RequestFn<$, $$, P, MD>, options?: Options<$, $$, MD>): WrapRequest<$, $$, P, MD>;
+export declare function wrapRequest<$, $$ = $, P = any, MD = any>(request: RequestFn<$, P>, options?: Options<$, $$, MD>): WrapRequest<$, $$, P, MD>;
 export {};
