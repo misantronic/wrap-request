@@ -9,12 +9,13 @@ interface Options<$, $$, MD> {
     /** a function which return value will be set as metadata */
     metadata?: ($: $) => MD;
 }
-interface RequestOptions {
+interface RequestOptions<$, $$, P, MD> {
     stateLoading?: boolean;
     throwError?: boolean;
+    context: WrapRequest<$, $$, P, MD>;
     __ignoreXhrVersion__?: boolean;
 }
-declare type RequestFn<$, $$, P, MD> = (params: P, context: WrapRequest<$, $$, P, MD>) => Promise<$>;
+declare type RequestFn<$, $$, P, MD> = (params: P, options: RequestOptions<$, $$, P, MD>) => Promise<$>;
 export declare const __wrapRequestDebug__: {
     cache: {
         clear: () => void;
@@ -40,7 +41,7 @@ export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     private getCacheKey;
     private getCachedData;
     private checkXhrVersion;
-    request(...[params, options]: P extends undefined ? [undefined?, RequestOptions?] : [P, RequestOptions?]): Promise<RESULT<$, $$>>;
+    request(...[params, options]: P extends undefined ? [undefined?, Omit<RequestOptions<$, $$, P, MD>, 'context'>?] : [P, Omit<RequestOptions<$, $$, P, MD>, 'context'>?]): Promise<RESULT<$, $$>>;
     get $(): RESULT<$, $$>;
     /** alias for this.$ */
     get result(): RESULT<$, $$>;
