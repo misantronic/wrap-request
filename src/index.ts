@@ -11,15 +11,16 @@ interface Options<$, $$, MD> {
     metadata?: ($: $) => MD;
 }
 
-interface RequestOptions {
+interface RequestOptions<$, $$, P, MD> {
     stateLoading?: boolean;
     throwError?: boolean;
+    context: WrapRequest<$, $$, P, MD>;
     __ignoreXhrVersion__?: boolean;
 }
 
 type RequestFn<$, $$, P, MD> = (
     params: P,
-    context: WrapRequest<$, $$, P, MD>
+    options: RequestOptions<$, $$, P, MD>
 ) => Promise<$>;
 
 /** @see https://stackoverflow.com/a/4994244/1138860 */
@@ -108,8 +109,8 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
 
     public async request(
         ...[params, options]: P extends undefined
-            ? [undefined?, RequestOptions?]
-            : [P, RequestOptions?]
+            ? [undefined?, Omit<RequestOptions<$, $$, P, MD>, 'context'>?]
+            : [P, Omit<RequestOptions<$, $$, P, MD>, 'context'>?]
     ) {
         const stateLoading = options?.stateLoading ?? true;
         const throwError = options?.throwError ?? false;
@@ -146,7 +147,7 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
                     this.state = 'loading';
                 }
 
-                this.xhr = this.req(params as P, this);
+                this.xhr = this.req(params as P, { ...options, context: this });
 
                 const result = await this.xhr;
 

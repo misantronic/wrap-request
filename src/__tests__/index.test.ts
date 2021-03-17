@@ -549,8 +549,8 @@ test('it should access source', async () => {
 
 test('it should access context', async () => {
     const wrap = wrapRequest<number>(
-        async (params: { increase: number }, context) => {
-            const prevValue = context.$ || 0;
+        async (params: { increase: number }, options) => {
+            const prevValue = options.context.$ || 0;
 
             return prevValue + params.increase;
         }
