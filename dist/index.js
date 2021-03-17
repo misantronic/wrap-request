@@ -184,7 +184,9 @@ class WrapRequest {
     }
     get $() {
         var _a;
-        return (((_a = this.transform) === null || _a === void 0 ? void 0 : _a.call(this, this._$)) || this._$);
+        return (((_a = this.transform) === null || _a === void 0 ? void 0 : _a.call(this, this._$)) ||
+            this._$ ||
+            this.options.defaultData);
     }
     /** alias for this.$ */
     get result() {

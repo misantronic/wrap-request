@@ -166,7 +166,9 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     }
 
     public get $(): RESULT<$, $$> {
-        return (this.transform?.(this._$) || this._$) as RESULT<$, $$>;
+        return (this.transform?.(this._$) ||
+            this._$ ||
+            this.options.defaultData) as RESULT<$, $$>;
     }
 
     /** alias for this.$ */
