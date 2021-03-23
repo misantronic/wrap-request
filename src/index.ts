@@ -286,6 +286,22 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
         return this.$;
     }
 
+    public pipe<X = any>(
+        transform: ($: RESULT<$, $$>) => X
+    ): WrapRequest<$, X, P, MD> {
+        const thisAny = this as any;
+
+        return new Proxy(thisAny, {
+            get: (_target, prop) => {
+                if (prop === '$') {
+                    return transform(this.$);
+                }
+
+                return thisAny[prop];
+            }
+        });
+    }
+
     public disposeCache(key?: string) {
         if (key) {
             delete cache[key];

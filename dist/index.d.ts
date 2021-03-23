@@ -62,6 +62,7 @@ export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     reset(value?: $, params?: P): void;
     didFetch<T = any>(cb: ($: RESULT<$, $$>) => T): T | null;
     when(): Promise<RESULT<$, $$>>;
+    pipe<X = any>(transform: ($: RESULT<$, $$>) => X): WrapRequest<$, X, P, MD>;
     disposeCache(key?: string): void;
 }
 /**

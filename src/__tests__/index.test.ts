@@ -562,3 +562,15 @@ test('it should access context', async () => {
 
     expect(wrap.$).toEqual(6);
 });
+
+test('it should pipe', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+
+    await wrap.request();
+
+    const pipedWR = wrap.pipe((res) => res[0]);
+
+    expect(pipedWR.$).toBe(1);
+    expect(pipedWR.fetched).toBeTruthy();
+    expect(pipedWR.loading).toBeFalsy();
+});

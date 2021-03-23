@@ -277,6 +277,17 @@ class WrapRequest {
             return this.$;
         });
     }
+    pipe(transform) {
+        const thisAny = this;
+        return new Proxy(thisAny, {
+            get: (_target, prop) => {
+                if (prop === '$') {
+                    return transform(this.$);
+                }
+                return thisAny[prop];
+            }
+        });
+    }
     disposeCache(key) {
         if (key) {
             delete cache[key];
