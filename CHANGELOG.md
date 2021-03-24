@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.1.1](https://github.com/misantronic/wrap-request/compare/v5.0.5...v5.1.1) (2021-03-24)
+
+
+### Bug Fixes
+
+* disable fallthrough to `_$` when `transform` ([a01ba4a](https://github.com/misantronic/wrap-request/commit/a01ba4a3685095900c41c7fe4ef7927a0de628ab))
+
 ### [5.0.5](https://github.com/misantronic/wrap-request/compare/v6.0.0...v5.0.5) (2021-02-26)
 
 ## [5.0.4](https://github.com/misantronic/wrap-request/compare/v1.0.1...v5.0.4) (2021-02-26)
