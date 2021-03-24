@@ -166,9 +166,13 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     }
 
     public get $(): RESULT<$, $$> {
-        return (this.transform?.(this._$) ||
-            this._$ ||
-            this.options.defaultData) as RESULT<$, $$>;
+        const { defaultData } = this.options;
+
+        if (this.transform) {
+            return (this.transform(this._$) || defaultData) as RESULT<$, $$>;
+        }
+
+        return (this._$ || defaultData) as RESULT<$, $$>;
     }
 
     /** alias for this.$ */
