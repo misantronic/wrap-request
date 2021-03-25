@@ -300,9 +300,9 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
         const thisAny = this as any;
 
         return new Proxy(thisAny, {
-            get: (_target, prop) => {
-                if (prop === '$') {
-                    return transform(this.$);
+            get: (_target, prop: keyof WrapRequest) => {
+                if (prop === '$' || prop === 'result') {
+                    return transform(this.$) || this.options.defaultData;
                 }
 
                 return thisAny[prop];

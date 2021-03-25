@@ -278,8 +278,8 @@ class WrapRequest {
         const thisAny = this;
         return new Proxy(thisAny, {
             get: (_target, prop) => {
-                if (prop === '$') {
-                    return transform(this.$);
+                if (prop === '$' || prop === 'result') {
+                    return transform(this.$) || this.options.defaultData;
                 }
                 return thisAny[prop];
             }

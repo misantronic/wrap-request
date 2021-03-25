@@ -563,6 +563,18 @@ test('it should access context', async () => {
     expect(wrap.$).toEqual(6);
 });
 
+test('it should pipe with result', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+
+    wrap.request();
+
+    const pipedWR = wrap.pipe((res) => res[0]);
+
+    expect(pipedWR.loading).toBe(true);
+    expect(pipedWR.fetched).toBe(false);
+    expect(pipedWR.$).toEqual([]);
+});
+
 test('it should pipe after request', async () => {
     const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
 
