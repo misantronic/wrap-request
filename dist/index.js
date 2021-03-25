@@ -54,12 +54,6 @@ class WrapRequest {
             writable: true,
             value: void 0
         });
-        Object.defineProperty(this, "transform", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         Object.defineProperty(this, "state", {
             enumerable: true,
             configurable: true,
@@ -104,7 +98,6 @@ class WrapRequest {
         });
         this.req = req;
         this.options = options || {};
-        this.transform = this.options.transform;
         const cacheData = this.getCachedData(this.requestParams);
         this._$ = cacheData || this.options.defaultData;
         exports.__wrapRequestDebug__.wrapRequests.push(this);
@@ -183,11 +176,11 @@ class WrapRequest {
         });
     }
     get $() {
-        if (this.transform) {
-            return (this.transform(this._$) ||
-                this.options.defaultData);
+        const { defaultData, transform } = this.options;
+        if (transform) {
+            return (transform(this._$) || defaultData);
         }
-        return (this._$ || this.options.defaultData);
+        return (this._$ || defaultData);
     }
     /** alias for this.$ */
     get result() {
@@ -278,6 +271,9 @@ class WrapRequest {
             return this.$;
         });
     }
+    /**
+     * Return a new copy of the wrap-request with a transformed `$` / `result`
+     */
     pipe(transform) {
         const thisAny = this;
         return new Proxy(thisAny, {

@@ -4,7 +4,10 @@ interface Options<$, $$, MD> {
     defaultData?: any;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
-    /** a function which receives the request `$` and returns a new value */
+    /**
+     * @deprecated
+     * use pipe instead
+     */
     transform?: ($: $) => $$;
     /** a function which return value will be set as metadata */
     metadata?: ($: $) => MD;
@@ -29,7 +32,6 @@ declare type RESULT<$, $$> = $$ extends any ? $$ : $;
 export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     _$: $;
     error?: Error;
-    transform?: (value: $) => $$;
     state?: WrapRequestState;
     requestParams?: P;
     xhr?: Promise<$>;
@@ -62,7 +64,10 @@ export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     reset(value?: $, params?: P): void;
     didFetch<T = any>(cb: ($: RESULT<$, $$>) => T): T | null;
     when(): Promise<RESULT<$, $$>>;
-    pipe<X = any>(transform: ($: RESULT<$, $$>) => X): WrapRequest<$, X, P, MD>;
+    /**
+     * Return a new copy of the wrap-request with a transformed `$` / `result`
+     */
+    pipe<NEW_$$ = any>(transform: ($: RESULT<$, $$>) => NEW_$$): WrapRequest<$, NEW_$$, P, MD>;
     disposeCache(key?: string): void;
 }
 /**

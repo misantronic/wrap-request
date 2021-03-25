@@ -5,7 +5,10 @@ interface Options<$, $$, MD> {
     defaultData?: any;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
-    /** a function which receives the request `$` and returns a new value */
+    /**
+     * @deprecated
+     * use pipe instead
+     */
     transform?: ($: $) => $$;
     /** a function which return value will be set as metadata */
     metadata?: ($: $) => MD;
@@ -51,7 +54,6 @@ type RESULT<$, $$> = $$ extends any ? $$ : $;
 export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     public _$!: $;
     public error?: Error;
-    public transform?: (value: $) => $$;
     public state?: WrapRequestState;
     public requestParams?: P;
     public xhr?: Promise<$>;
@@ -64,7 +66,6 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     constructor(req: RequestFn<$, P>, options?: Options<$, $$, MD>) {
         this.req = req;
         this.options = options || {};
-        this.transform = this.options.transform;
 
         const cacheData = this.getCachedData(this.requestParams);
 
@@ -166,10 +167,10 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     }
 
     public get $(): RESULT<$, $$> {
-        const { defaultData } = this.options;
+        const { defaultData, transform } = this.options;
 
-        if (this.transform) {
-            return (this.transform(this._$) || defaultData) as RESULT<$, $$>;
+        if (transform) {
+            return (transform(this._$) || defaultData) as RESULT<$, $$>;
         }
 
         return (this._$ || defaultData) as RESULT<$, $$>;
@@ -290,9 +291,12 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
         return this.$;
     }
 
-    public pipe<X = any>(
-        transform: ($: RESULT<$, $$>) => X
-    ): WrapRequest<$, X, P, MD> {
+    /**
+     * Return a new copy of the wrap-request with a transformed `$` / `result`
+     */
+    public pipe<NEW_$$ = any>(
+        transform: ($: RESULT<$, $$>) => NEW_$$
+    ): WrapRequest<$, NEW_$$, P, MD> {
         const thisAny = this as any;
 
         return new Proxy(thisAny, {
