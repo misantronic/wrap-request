@@ -563,7 +563,7 @@ test('it should access context', async () => {
     expect(wrap.$).toEqual(6);
 });
 
-test('it should pipe', async () => {
+test('it should pipe after request', async () => {
     const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
 
     await wrap.request();
@@ -571,6 +571,34 @@ test('it should pipe', async () => {
     const pipedWR = wrap.pipe((res) => res[0]);
 
     expect(pipedWR.$).toBe(1);
+    expect(pipedWR.source).toEqual([1, 2, 3]);
     expect(pipedWR.fetched).toBeTruthy();
     expect(pipedWR.loading).toBeFalsy();
+});
+
+test('it should pipe before request', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] }).pipe(
+        (res) => res[0]
+    );
+
+    await wrap.request();
+
+    expect(wrap.$).toBe(1);
+    expect(wrap.source).toEqual([1, 2, 3]);
+    expect(wrap.fetched).toBeTruthy();
+    expect(wrap.loading).toBeFalsy();
+});
+
+test('it should pipe multiple times', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] }).pipe(
+        (res) => res[0]
+    );
+
+    const strigifiedWrap = wrap.pipe((res) => res.toString());
+
+    await wrap.request();
+
+    expect(strigifiedWrap.$).toBe('1');
+    expect(strigifiedWrap.source).toEqual([1, 2, 3]);
+    expect(wrap.source).toEqual([1, 2, 3]);
 });
