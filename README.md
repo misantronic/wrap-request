@@ -66,6 +66,20 @@ console.log(wrappedXhr.$); // same as result
 console.log(wrappedXhr.source); // list containing all items
 ```
 
+you can also chain or use pipes as often as you like:
+
+```js
+const wrappedXhr = wrapRequest(async () => [1, 2, 3, 4, 5], {
+    defaultData: []
+}).pipe((res) => res.map((num) => num.toString()));
+
+await wrappedXhr.request();
+
+const pipe1 = wrappedXhr.pipe((res) => res.slice(0, 2)); // [ '1', '2' ]
+const pipe2 = pipe1.pipe((res) => res.slice(0, 1)); // [ '1' ]
+const pipe3 = pipe2.pipe((res) => res[0]); // '1'
+```
+
 ## reset
 
 Reset all wrapper-values to its initial state.
