@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.1.5](https://github.com/misantronic/wrap-request/compare/v5.1.3...v5.1.5) (2021-05-27)
+
+
+### Bug Fixes
+
+* fix issue with `pipe` and using `match` ([ccfca3e](https://github.com/misantronic/wrap-request/commit/ccfca3e3636b33ebdd07f3f56c62b1d48b09eddf))
+
 ### [5.1.3](https://github.com/misantronic/wrap-request/compare/v5.1.2...v5.1.3) (2021-03-25)
 
 
