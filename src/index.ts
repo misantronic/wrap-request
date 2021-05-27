@@ -297,15 +297,17 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     public pipe<NEW_$$ = any>(
         transform: ($: RESULT<$, $$>) => NEW_$$
     ): WrapRequest<$, NEW_$$, P, MD> {
-        const thisAny = this as any;
-
-        return new Proxy(thisAny, {
-            get: (_target, prop: keyof WrapRequest) => {
+        return new Proxy(this as any, {
+            get: (target: WrapRequest, prop: keyof WrapRequest, receiver) => {
                 if (prop === '$' || prop === 'result') {
-                    return transform(this.$) || this.options.defaultData;
+                    try {
+                        return transform(this.$) || this.options.defaultData;
+                    } catch (e) {
+                        this.error = e;
+                    }
                 }
 
-                return thisAny[prop];
+                return Reflect.get(target, prop, receiver);
             }
         });
     }

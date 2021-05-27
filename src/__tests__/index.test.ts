@@ -614,3 +614,58 @@ test('it should pipe multiple times', async () => {
     expect(strigifiedWrap.source).toEqual([1, 2, 3]);
     expect(wrap.source).toEqual([1, 2, 3]);
 });
+
+test('it should pipe with match (fetched)', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+
+    await wrap.request();
+
+    const pipedWR = wrap.pipe((res) => res[0]);
+    const match = pipedWR.match({
+        fetched: (res) => res
+    });
+
+    expect(match).toEqual(1);
+});
+
+test('it should pipe with match (loading)', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+
+    wrap.request();
+
+    const pipedWR = wrap.pipe((res) => res[0]);
+    const match = pipedWR.match({
+        loading: () => 'Loading'
+    });
+
+    expect(match).toEqual('Loading');
+});
+
+test('it should pipe with match (empty)', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+
+    await wrap.request();
+
+    const pipedWR = wrap.pipe(() => []);
+    const match = pipedWR.match({
+        empty: () => 'Empty'
+    });
+
+    expect(match).toEqual('Empty');
+});
+
+test('it should pipe with match (error)', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+
+    const pipedWR = wrap.pipe(() => {
+        throw new Error('Error');
+    });
+
+    await pipedWR.request();
+
+    const match = pipedWR.match({
+        error: () => 'Error'
+    });
+
+    expect(match).toEqual('Error');
+});

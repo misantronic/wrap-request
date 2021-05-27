@@ -275,13 +275,17 @@ class WrapRequest {
      * Return a new copy of the wrap-request with a transformed `$` / `result`
      */
     pipe(transform) {
-        const thisAny = this;
-        return new Proxy(thisAny, {
-            get: (_target, prop) => {
+        return new Proxy(this, {
+            get: (target, prop, receiver) => {
                 if (prop === '$' || prop === 'result') {
-                    return transform(this.$) || this.options.defaultData;
+                    try {
+                        return transform(this.$) || this.options.defaultData;
+                    }
+                    catch (e) {
+                        this.error = e;
+                    }
                 }
-                return thisAny[prop];
+                return Reflect.get(target, prop, receiver);
             }
         });
     }
