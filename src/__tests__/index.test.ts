@@ -575,6 +575,16 @@ test('it should pipe with result', async () => {
     expect(pipedWR.$).toEqual([]);
 });
 
+test('it should pipe without request', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3]);
+
+    const pipedWR = wrap.pipe((res) => res[0]);
+
+    expect(pipedWR.loading).toBe(false);
+    expect(pipedWR.fetched).toBe(false);
+    expect(pipedWR.$).toEqual(undefined);
+});
+
 test('it should pipe after request', async () => {
     const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
 

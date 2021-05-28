@@ -299,7 +299,7 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     ): WrapRequest<$, NEW_$$, P, MD> {
         return new Proxy(this as any, {
             get: (target: WrapRequest, prop: keyof WrapRequest, receiver) => {
-                if (prop === '$' || prop === 'result') {
+                if (this.fetched && (prop === '$' || prop === 'result')) {
                     try {
                         return transform(this.$) || this.options.defaultData;
                     } catch (e) {
