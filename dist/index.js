@@ -277,7 +277,7 @@ class WrapRequest {
     pipe(transform) {
         return new Proxy(this, {
             get: (target, prop, receiver) => {
-                if (prop === '$' || prop === 'result') {
+                if (this.fetched && (prop === '$' || prop === 'result')) {
                     try {
                         return transform(this.$) || this.options.defaultData;
                     }
