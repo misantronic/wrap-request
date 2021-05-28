@@ -62,6 +62,7 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     private _metadata?: MD;
     private options: Options<$, $$, MD> = {};
     private req: RequestFn<$, P>;
+    private parent?: WrapRequest<$, any, P, MD>;
 
     constructor(req: RequestFn<$, P>, options?: Options<$, $$, MD>) {
         this.req = req;
@@ -170,7 +171,14 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
         const { defaultData, transform } = this.options;
 
         if (transform) {
-            return (transform(this._$) || defaultData) as RESULT<$, $$>;
+            try {
+                const parent_$ =
+                    this.parent?.options.transform?.(this._$) || this._$;
+
+                return (transform(parent_$) || defaultData) as RESULT<$, $$>;
+            } catch (e) {
+                this.error = e;
+            }
         }
 
         return (this._$ || defaultData) as RESULT<$, $$>;
@@ -297,19 +305,31 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     public pipe<NEW_$$ = any>(
         transform: ($: RESULT<$, $$>) => NEW_$$
     ): WrapRequest<$, NEW_$$, P, MD> {
-        return new Proxy(this as any, {
-            get: (target: WrapRequest, prop: keyof WrapRequest, receiver) => {
-                if (this.fetched && (prop === '$' || prop === 'result')) {
-                    try {
-                        return transform(this.$) || this.options.defaultData;
-                    } catch (e) {
-                        this.error = e;
-                    }
-                }
+        const wr = wrapRequest<$, NEW_$$, P, MD>(this.req, {
+            ...this.options,
+            transform: transform as any
+        });
 
-                return Reflect.get(target, prop, receiver);
+        const propBlackList = ['options', 'parent'];
+
+        Object.keys(this).forEach((rawKey) => {
+            const key: keyof WrapRequest = rawKey as any;
+
+            if (!propBlackList.includes(key)) {
+                Object.defineProperty(wr, key, {
+                    get: () => {
+                        return this[key];
+                    },
+                    set: (newVal) => {
+                        Object.assign(this, { [key]: newVal });
+                    }
+                });
             }
         });
+
+        wr.parent = this;
+
+        return wr;
     }
 
     public disposeCache(key?: string) {

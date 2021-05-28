@@ -577,8 +577,7 @@ test('it should pipe with result', async () => {
 
 test('it should pipe without request', async () => {
     const wrap = wrapRequest(async () => [1, 2, 3]);
-
-    const pipedWR = wrap.pipe((res) => res[0]);
+    const pipedWR = wrap.pipe((res) => res?.[0]);
 
     expect(pipedWR.loading).toBe(false);
     expect(pipedWR.fetched).toBe(false);
@@ -620,9 +619,10 @@ test('it should pipe multiple times', async () => {
 
     await wrap.request();
 
+    expect(wrap.source).toEqual([1, 2, 3]);
+    expect(wrap.$).toEqual(1);
     expect(strigifiedWrap.$).toBe('1');
     expect(strigifiedWrap.source).toEqual([1, 2, 3]);
-    expect(wrap.source).toEqual([1, 2, 3]);
 });
 
 test('it should pipe with match (fetched)', async () => {
@@ -652,12 +652,11 @@ test('it should pipe with match (loading)', async () => {
 });
 
 test('it should pipe with match (empty)', async () => {
-    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+    const wrap = wrapRequest(async () => [1, 2, 3]).pipe(() => []);
 
     await wrap.request();
 
-    const pipedWR = wrap.pipe(() => []);
-    const match = pipedWR.match({
+    const match = wrap.match({
         empty: () => 'Empty'
     });
 
