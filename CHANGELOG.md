@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.1.6](https://github.com/misantronic/wrap-request/compare/v5.1.5...v5.1.6) (2021-05-28)
+
+
+### Bug Fixes
+
+* output `pipe`-result only when state is fetched ([e874b86](https://github.com/misantronic/wrap-request/commit/e874b860dc4e6a97558f654c1ae94206166fe294))
+
 ### [5.1.5](https://github.com/misantronic/wrap-request/compare/v5.1.3...v5.1.5) (2021-05-27)
 
 
