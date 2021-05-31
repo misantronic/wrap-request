@@ -96,6 +96,12 @@ class WrapRequest {
             writable: true,
             value: void 0
         });
+        Object.defineProperty(this, "parent", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
         this.req = req;
         this.options = options || {};
         const cacheData = this.getCachedData(this.requestParams);
@@ -176,9 +182,16 @@ class WrapRequest {
         });
     }
     get $() {
+        var _a, _b, _c;
         const { defaultData, transform } = this.options;
         if (transform) {
-            return (transform(this._$) || defaultData);
+            try {
+                const parent_$ = ((_c = (_a = this.parent) === null || _a === void 0 ? void 0 : (_b = _a.options).transform) === null || _c === void 0 ? void 0 : _c.call(_b, this._$)) || this._$;
+                return (transform(parent_$) || defaultData);
+            }
+            catch (e) {
+                this.error = e;
+            }
         }
         return (this._$ || defaultData);
     }
@@ -275,19 +288,23 @@ class WrapRequest {
      * Return a new copy of the wrap-request with a transformed `$` / `result`
      */
     pipe(transform) {
-        return new Proxy(this, {
-            get: (target, prop, receiver) => {
-                if (this.fetched && (prop === '$' || prop === 'result')) {
-                    try {
-                        return transform(this.$) || this.options.defaultData;
+        const wr = wrapRequest(this.req, Object.assign(Object.assign({}, this.options), { transform: transform }));
+        const propBlackList = ['options', 'parent'];
+        Object.keys(this).forEach((rawKey) => {
+            const key = rawKey;
+            if (!propBlackList.includes(key)) {
+                Object.defineProperty(wr, key, {
+                    get: () => {
+                        return this[key];
+                    },
+                    set: (newVal) => {
+                        Object.assign(this, { [key]: newVal });
                     }
-                    catch (e) {
-                        this.error = e;
-                    }
-                }
-                return Reflect.get(target, prop, receiver);
+                });
             }
         });
+        wr.parent = this;
+        return wr;
     }
     disposeCache(key) {
         if (key) {

@@ -39,6 +39,7 @@ export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     private _metadata?;
     private options;
     private req;
+    private parent?;
     constructor(req: RequestFn<$, P>, options?: Options<$, $$, MD>);
     private getCacheKey;
     private getCachedData;
