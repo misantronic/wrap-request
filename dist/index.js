@@ -249,7 +249,7 @@ class WrapRequest {
         this.requestParams = undefined;
         this.state = isEmpty(value) ? undefined : 'fetched';
         if (cacheKey) {
-            cache[cacheKey] = this._$;
+            cache[cacheKey] = undefined;
         }
         if (this.options.metadata && value) {
             this._metadata = this.options.metadata(value);

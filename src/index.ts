@@ -261,7 +261,7 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
         this.state = isEmpty(value) ? undefined : 'fetched';
 
         if (cacheKey) {
-            cache[cacheKey] = this._$;
+            cache[cacheKey] = undefined;
         }
 
         if (this.options.metadata && value) {
