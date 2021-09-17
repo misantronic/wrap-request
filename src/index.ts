@@ -221,13 +221,13 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
         return false;
     }
 
-    public match(handlers: {
-        default?(): any;
-        loading?(): any;
-        fetched?(value: RESULT<$, $$>): any;
-        empty?(): any;
-        error?(e: Error): any;
-    }) {
+    public match<T extends any>(handlers: {
+        default?(): T;
+        loading?(): T;
+        fetched?(value: RESULT<$, $$>): T;
+        empty?(): T;
+        error?(e: Error): T;
+    }): T | null {
         if (this.error && handlers.error) {
             return handlers.error(this.error);
         }
