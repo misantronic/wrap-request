@@ -72,7 +72,7 @@ test('it should match loading', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: (e) => e
+            error: (e) => e.message
         })
     ).toEqual('Loading');
 });
@@ -89,7 +89,7 @@ test('it should match fetched', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: (e) => e
+            error: (e) => e.message
         })
     ).toEqual('Fetched');
 });
@@ -106,14 +106,17 @@ test('it should match empty', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: (e) => e
+            error: (e) => e.message
         })
     ).toEqual('Empty');
 });
 
 test('it should match error', async () => {
     const wrap = wrapRequest(
-        () => new Promise((_, reject) => setTimeout(() => reject('Error'), 0))
+        () =>
+            new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Error')), 0)
+            )
     );
 
     await wrap.request();
@@ -123,7 +126,7 @@ test('it should match error', async () => {
             loading: () => 'Loading',
             fetched: () => 'Fetched',
             empty: () => 'Empty',
-            error: (e) => e
+            error: (e) => e.message
         })
     ).toEqual('Error');
 });
