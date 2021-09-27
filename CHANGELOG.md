@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.2.0](https://github.com/misantronic/wrap-request/compare/v5.1.9...v5.2.0) (2021-09-27)
+
+
+### Features
+
+* improved match return typings ([d4226a4](https://github.com/misantronic/wrap-request/commit/d4226a4a10554e60209e7bc0d131bc8d64386311))
+
 ### [5.1.9](https://github.com/misantronic/wrap-request/compare/v5.1.8...v5.1.9) (2021-07-09)
 
 
