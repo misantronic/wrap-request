@@ -29,7 +29,7 @@ export declare const __wrapRequestDebug__: {
     wrapRequests: WrapRequest<any, any, any, any>[];
 };
 declare type RESULT<$, $$> = $$ extends any ? $$ : $;
-export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
+export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
     _$: $;
     error?: Error;
     state?: WrapRequestState;
@@ -55,25 +55,25 @@ export declare class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     get fetched(): boolean;
     set fetched(value: boolean);
     get empty(): boolean;
-    match(handlers: {
-        default?(): any;
-        loading?(): any;
-        fetched?(value: RESULT<$, $$>): any;
-        empty?(): any;
-        error?(e: Error): any;
-    }): any;
+    match<T extends any>(handlers: {
+        default?(): T;
+        loading?(): T;
+        fetched?(value: RESULT<$, $$>): T;
+        empty?(): T;
+        error?(e: Error): T;
+    }): T | null;
     reset(value?: $, params?: P): void;
     didFetch<T = any>(cb: ($: RESULT<$, $$>) => T): T | null;
     when(): Promise<RESULT<$, $$>>;
     /**
      * Return a new copy of the wrap-request with a transformed `$` / `result`
      */
-    pipe<NEW_$$ = any>(transform: ($: RESULT<$, $$>) => NEW_$$): WrapRequest<$, NEW_$$, P, MD>;
+    pipe<NEW_$$ = any>(transform: ($: RESULT<$, $$>) => NEW_$$): WrapRequest<$, P, NEW_$$, MD>;
     disposeCache(key?: string): void;
 }
 /**
  * @param request The request to perform when calling `wrapRequest.request`
  * @param options {Options}
  */
-export declare function wrapRequest<$, $$ = $, P = any, MD = any>(request: RequestFn<$, P>, options?: Options<$, $$, MD>): WrapRequest<$, $$, P, MD>;
+export declare function wrapRequest<$, P = any, $$ = $, MD = any>(request: RequestFn<$, P>, options?: Options<$, $$, MD>): WrapRequest<$, P, $$, MD>;
 export {};

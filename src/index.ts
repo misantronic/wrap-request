@@ -51,7 +51,7 @@ export const __wrapRequestDebug__ = {
 
 type RESULT<$, $$> = $$ extends any ? $$ : $;
 
-export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
+export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
     public _$!: $;
     public error?: Error;
     public state?: WrapRequestState;
@@ -62,7 +62,7 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
     private _metadata?: MD;
     private options: Options<$, $$, MD> = {};
     private req: RequestFn<$, P>;
-    private parent?: WrapRequest<$, any, P, MD>;
+    private parent?: WrapRequest<$, P, any, MD>;
 
     constructor(req: RequestFn<$, P>, options?: Options<$, $$, MD>) {
         this.req = req;
@@ -156,7 +156,7 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
             }
         } catch (e) {
             if (this.checkXhrVersion(version, stateLoading)) {
-                this.error = e;
+                this.error = e as Error;
                 this.state = 'error';
             }
             if (throwError) {
@@ -177,7 +177,7 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
 
                 return (transform(parent_$) || defaultData) as RESULT<$, $$>;
             } catch (e) {
-                this.error = e;
+                this.error = e as Error;
             }
         }
 
@@ -304,8 +304,8 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
      */
     public pipe<NEW_$$ = any>(
         transform: ($: RESULT<$, $$>) => NEW_$$
-    ): WrapRequest<$, NEW_$$, P, MD> {
-        const wr = wrapRequest<$, NEW_$$, P, MD>(this.req, {
+    ): WrapRequest<$, P, NEW_$$, MD> {
+        const wr = wrapRequest<$, P, NEW_$$, MD>(this.req, {
             ...this.options,
             transform: transform as any
         });
@@ -347,9 +347,9 @@ export class WrapRequest<$ = any, $$ = $, P = any, MD = any> {
  */
 export function wrapRequest<
     $ /* result */,
-    $$ = $ /* transformed result */,
     P = any /* request-parameters */,
+    $$ = $ /* transformed result */,
     MD = any /* meta-data */
 >(request: RequestFn<$, P>, options?: Options<$, $$, MD>) {
-    return new WrapRequest<$, $$, P, MD>(request, options);
+    return new WrapRequest<$, P, $$, MD>(request, options);
 }
