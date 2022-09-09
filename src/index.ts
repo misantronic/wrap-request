@@ -1,6 +1,6 @@
 export type WrapRequestState = 'loading' | 'fetched' | 'error';
 
-interface Options<$, $$, MD> {
+export interface Options<$, $$, MD> {
     /** set a default value for `wrapRequest.$` e.g. `[]` */
     defaultData?: any;
     /** when provided, the result will be globally cached  */
@@ -14,14 +14,17 @@ interface Options<$, $$, MD> {
     metadata?: ($: $) => MD;
 }
 
-interface RequestOptions {
+export interface RequestOptions {
     stateLoading?: boolean;
     throwError?: boolean;
     context: WrapRequest;
     __ignoreXhrVersion__?: boolean;
 }
 
-type RequestFn<$, P> = (params: P, options: RequestOptions) => Promise<$>;
+export type RequestFn<$, P> = (
+    params: P,
+    options: RequestOptions
+) => Promise<$>;
 
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj: any): boolean {
