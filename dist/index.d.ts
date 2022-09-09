@@ -1,5 +1,5 @@
 export declare type WrapRequestState = 'loading' | 'fetched' | 'error';
-interface Options<$, $$, MD> {
+export interface Options<$, $$, MD> {
     /** set a default value for `wrapRequest.$` e.g. `[]` */
     defaultData?: any;
     /** when provided, the result will be globally cached  */
@@ -12,13 +12,13 @@ interface Options<$, $$, MD> {
     /** a function which return value will be set as metadata */
     metadata?: ($: $) => MD;
 }
-interface RequestOptions {
+export interface RequestOptions {
     stateLoading?: boolean;
     throwError?: boolean;
     context: WrapRequest;
     __ignoreXhrVersion__?: boolean;
 }
-declare type RequestFn<$, P> = (params: P, options: RequestOptions) => Promise<$>;
+export declare type RequestFn<$, P> = (params: P, options: RequestOptions) => Promise<$>;
 export declare const __wrapRequestDebug__: {
     cache: {
         clear: () => void;
