@@ -172,18 +172,25 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
     public get $(): RESULT<$, $$> {
         const { defaultData, transform } = this.options;
 
-        if (transform && this.state === 'fetched') {
-            try {
-                const parent_$ =
-                    this.parent?.options.transform?.(this._$) || this._$;
+        if (transform) {
+            if (this.state === 'fetched') {
+                try {
+                    const parent_$ =
+                        this.parent?.options.transform?.(this._$) || this._$;
 
-                return (transform(parent_$) || defaultData) as RESULT<$, $$>;
-            } catch (e) {
-                this.error = e as Error;
+                    return (transform(parent_$) || defaultData) as RESULT<
+                        $,
+                        $$
+                    >;
+                } catch (e) {
+                    this.error = e as Error;
+                }
             }
+
+            return defaultData;
         }
 
-        return (this._$ || defaultData) as RESULT<$, $$>;
+        return this._$ || defaultData;
     }
 
     /** alias for this.$ */
