@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.0.3](https://github.com/misantronic/wrap-request/compare/v6.0.2...v6.0.3) (2022-09-20)
+
+
+### Bug Fixes
+
+* check on fetched-state when piping / transforming data ([8143380](https://github.com/misantronic/wrap-request/commit/814338044ada2233fd2a858f9b710192e56a16b9))
+
 ### [6.0.2](https://github.com/misantronic/wrap-request/compare/v6.0.1...v6.0.2) (2022-09-09)
 
 ### [6.0.1](https://github.com/misantronic/wrap-request/compare/v6.0.0...v6.0.1) (2022-09-09)
