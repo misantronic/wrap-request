@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.0.5](https://github.com/misantronic/wrap-request/compare/v6.0.4...v6.0.5) (2022-09-20)
+
+
+### Bug Fixes
+
+* pipe state-dependant return-value ([87f49ae](https://github.com/misantronic/wrap-request/commit/87f49aee40dd9885fb84d2b5d262ca0dd8a8a1c1))
+
 ### [6.0.4](https://github.com/misantronic/wrap-request/compare/v6.0.3...v6.0.4) (2022-09-20)
 
 ### [6.0.3](https://github.com/misantronic/wrap-request/compare/v6.0.2...v6.0.3) (2022-09-20)
