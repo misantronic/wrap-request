@@ -288,7 +288,7 @@ class WrapRequest {
      * Return a new copy of the wrap-request with a transformed `$` / `result`
      */
     pipe(transform) {
-        const wr = wrapRequest(this.req, Object.assign(Object.assign({}, this.options), { transform: transform }));
+        const wr = new WrapRequest(this.req, Object.assign(Object.assign({}, this.options), { transform: transform }));
         const propBlackList = ['options', 'parent'];
         Object.keys(this).forEach((rawKey) => {
             const key = rawKey;

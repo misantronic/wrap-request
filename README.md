@@ -50,9 +50,9 @@ especially when dealing with lists it comes in handy to set a default value.
 const wrappedXhr = wrapRequest(() => fetch('...'), { defaultData: [] });
 ```
 
-## pipe / transform
+## pipe
 
-sometimes it is useful, to directly transform the result and keep a copy of the original data in the wrapper.
+sometimes it is useful, to directly pipe the result and keep a copy of the original data in the wrapper.
 
 ```js
 const wrappedXhr = wrapRequest(() => fetch('...'), {

@@ -1,16 +1,14 @@
 export declare type WrapRequestState = 'loading' | 'fetched' | 'error';
-export interface Options<$, $$, MD> {
+export interface Options<$, MD> {
     /** set a default value for `wrapRequest.$` e.g. `[]` */
     defaultData?: any;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
-    /**
-     * @deprecated
-     * use pipe instead
-     */
-    transform?: ($: $) => $$;
     /** a function which return value will be set as metadata */
     metadata?: ($: $) => MD;
+}
+interface InternalOptions<$, $$, MD> extends Options<$, MD> {
+    transform?: ($: $) => $$;
 }
 export interface RequestOptions {
     stateLoading?: boolean;
@@ -40,7 +38,7 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
     private options;
     private req;
     private parent?;
-    constructor(req: RequestFn<$, P>, options?: Options<$, $$, MD>);
+    constructor(req: RequestFn<$, P>, options?: InternalOptions<$, $$, MD>);
     private getCacheKey;
     private getCachedData;
     private checkXhrVersion;
@@ -75,5 +73,5 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
  * @param request The request to perform when calling `wrapRequest.request`
  * @param options {Options}
  */
-export declare function wrapRequest<$, P = any, $$ = $, MD = any>(request: RequestFn<$, P>, options?: Options<$, $$, MD>): WrapRequest<$, P, $$, MD>;
+export declare function wrapRequest<$, P = any, $$ = $, MD = any>(request: RequestFn<$, P>, options?: Options<$, MD>): WrapRequest<$, P, $$, MD>;
 export {};

@@ -1,17 +1,16 @@
 export type WrapRequestState = 'loading' | 'fetched' | 'error';
 
-export interface Options<$, $$, MD> {
+export interface Options<$, MD> {
     /** set a default value for `wrapRequest.$` e.g. `[]` */
     defaultData?: any;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
-    /**
-     * @deprecated
-     * use pipe instead
-     */
-    transform?: ($: $) => $$;
     /** a function which return value will be set as metadata */
     metadata?: ($: $) => MD;
+}
+
+interface InternalOptions<$, $$, MD> extends Options<$, MD> {
+    transform?: ($: $) => $$;
 }
 
 export interface RequestOptions {
@@ -63,11 +62,11 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
 
     private xhrVersion = 0;
     private _metadata?: MD;
-    private options: Options<$, $$, MD> = {};
+    private options: InternalOptions<$, $$, MD> = {};
     private req: RequestFn<$, P>;
     private parent?: WrapRequest<$, P, any, MD>;
 
-    constructor(req: RequestFn<$, P>, options?: Options<$, $$, MD>) {
+    constructor(req: RequestFn<$, P>, options?: InternalOptions<$, $$, MD>) {
         this.req = req;
         this.options = options || {};
 
@@ -308,7 +307,7 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
     public pipe<NEW_$$ = any>(
         transform: ($: RESULT<$, $$>) => NEW_$$
     ): WrapRequest<$, P, NEW_$$, MD> {
-        const wr = wrapRequest<$, P, NEW_$$, MD>(this.req, {
+        const wr = new WrapRequest<$, P, NEW_$$, MD>(this.req, {
             ...this.options,
             transform: transform as any
         });
@@ -353,6 +352,6 @@ export function wrapRequest<
     P = any /* request-parameters */,
     $$ = $ /* transformed result */,
     MD = any /* meta-data */
->(request: RequestFn<$, P>, options?: Options<$, $$, MD>) {
+>(request: RequestFn<$, P>, options?: Options<$, MD>) {
     return new WrapRequest<$, P, $$, MD>(request, options);
 }

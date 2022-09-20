@@ -160,8 +160,8 @@ test('it should set default data when request errors', async () => {
         async (): Promise<any[]> => {
             throw new Error('Error');
         },
-        { defaultData: [], transform: (data) => data.filter((x) => x) }
-    );
+        { defaultData: [] }
+    ).pipe((data) => data.filter((x) => x));
 
     await wrap.request();
 
@@ -174,8 +174,8 @@ test('it should transform data', async () => {
             new Promise<Obj[]>((resolve) =>
                 setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
             ),
-        { defaultData: [], transform: (res) => res[0] }
-    );
+        { defaultData: [] }
+    ).pipe((res) => res[0]);
 
     const data = await wrap.request();
 
@@ -188,9 +188,8 @@ test('it should fail to transform data', async () => {
         () =>
             new Promise<Obj[]>((_, reject) =>
                 setTimeout(() => reject('Error'), 0)
-            ),
-        { transform: (res) => res?.[0] }
-    );
+            )
+    ).pipe((res) => res?.[0]);
 
     await wrap.request();
 
@@ -203,8 +202,8 @@ test('it should transform data with different type', async () => {
             new Promise<{ content: number[] }>((resolve) =>
                 setTimeout(() => resolve({ content: [1, 2, 3] }), 0)
             ),
-        { defaultData: [], transform: (res) => res.content || [] }
-    );
+        { defaultData: [] }
+    ).pipe((res) => res.content || []);
 
     const data = await wrap.request();
 
@@ -229,14 +228,14 @@ test('it should cache data', async () => {
     expect(wrap.$).toEqual({ id: 1, name: 'Foo' });
 });
 
-test('it should cache data with transform', async () => {
+test('it should cache data with pipe', async () => {
     const wrap = wrapRequest(
         () =>
             new Promise<Obj>((resolve) =>
                 setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
             ),
-        { transform: (obj) => obj.name, cacheKey: 'test' }
-    );
+        { cacheKey: 'test' }
+    ).pipe((obj) => obj.name);
 
     await wrap.request();
 
@@ -456,9 +455,8 @@ test('it should set metadata', async () => {
 
 test('it should get metadata (and ignore the transformed value)', async () => {
     const wrap = wrapRequest(async () => [5], {
-        transform: (res) => res[0],
         metadata: (res) => ({ num: res[0] })
-    });
+    }).pipe((res) => res[0]);
 
     await wrap.request();
 
@@ -544,7 +542,7 @@ test('it should access requestParams', () => {
 });
 
 test('it should access source', async () => {
-    const wrap = wrapRequest(async () => [1], { transform: (data) => data[0] });
+    const wrap = wrapRequest(async () => [1]).pipe((data) => data[0]);
 
     await wrap.request();
 
