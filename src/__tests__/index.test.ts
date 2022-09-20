@@ -324,7 +324,9 @@ test('it should error with `when` (request-first)', async () => {
     try {
         await wrap.when();
     } catch (e) {
-        expect(e.message).toEqual('Error');
+        if (e instanceof Error) {
+            expect(e.message).toEqual('Error');
+        }
     }
 });
 

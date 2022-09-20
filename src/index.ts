@@ -173,7 +173,7 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
     public get $(): RESULT<$, $$> {
         const { defaultData, transform } = this.options;
 
-        if (transform) {
+        if (transform && this.state === 'fetched') {
             try {
                 const parent_$ =
                     this.parent?.options.transform?.(this._$) || this._$;

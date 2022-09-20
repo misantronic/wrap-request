@@ -184,7 +184,7 @@ class WrapRequest {
     get $() {
         var _a, _b, _c;
         const { defaultData, transform } = this.options;
-        if (transform) {
+        if (transform && this.state === 'fetched') {
             try {
                 const parent_$ = ((_c = (_a = this.parent) === null || _a === void 0 ? void 0 : (_b = _a.options).transform) === null || _c === void 0 ? void 0 : _c.call(_b, this._$)) || this._$;
                 return (transform(parent_$) || defaultData);
