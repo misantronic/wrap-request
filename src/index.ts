@@ -16,6 +16,7 @@ interface InternalOptions<$, $$, MD> extends Options<$, MD> {
 export interface RequestOptions {
     stateLoading?: boolean;
     throwError?: boolean;
+    ignoreCache?: boolean;
     context: WrapRequest;
     __ignoreXhrVersion__?: boolean;
 }
@@ -42,13 +43,16 @@ function isEmpty(obj: any): boolean {
 let cache: { [key: string]: any } = {};
 
 export const __wrapRequestDebug__ = {
+    wrapRequests: [] as WrapRequest[]
+};
+
+export const __wrapRequest__ = {
     cache: {
         clear: () => {
             cache = {};
         },
         contents: cache
-    },
-    wrapRequests: [] as WrapRequest[]
+    }
 };
 
 type RESULT<$, $$> = $$ extends any ? $$ : $;
@@ -121,7 +125,9 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
             ? this.xhrVersion
             : ++this.xhrVersion;
         const cacheKey = this.getCacheKey(params);
-        const cacheData = this.getCachedData(params);
+        const cacheData = options?.ignoreCache
+            ? undefined
+            : this.getCachedData(params);
 
         this.requestParams = params;
         this.error = undefined;
@@ -341,11 +347,11 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
         return wr;
     }
 
-    public disposeCache(key?: string) {
+    public disposeCache() {
+        const key = this.getCacheKey(this.requestParams);
+
         if (key) {
             delete cache[key];
-        } else {
-            cache = {};
         }
     }
 }

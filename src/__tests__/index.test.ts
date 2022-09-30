@@ -1,9 +1,13 @@
-import { wrapRequest } from '../';
+import { wrapRequest, __wrapRequest__ } from '../';
 
 interface Obj {
     id: number;
     name: string;
 }
+
+afterEach(() => {
+    __wrapRequest__.cache.clear();
+});
 
 test('it should set loading state', () => {
     const wrap = wrapRequest(
@@ -226,6 +230,28 @@ test('it should cache data', async () => {
 
     expect(wrap.fetched).toBeTruthy();
     expect(wrap.$).toEqual({ id: 1, name: 'Foo' });
+});
+
+test('it should ignore cache', async () => {
+    let numRequest = 0;
+
+    const result1 = { id: 1 };
+    const result2 = { id: 2 };
+
+    const wrap = wrapRequest(
+        async () => (numRequest === 0 ? result1 : result2),
+        {
+            cacheKey: 'test'
+        }
+    );
+
+    await wrap.request();
+
+    numRequest++;
+
+    await wrap.request(undefined, { ignoreCache: true });
+
+    expect(wrap.$).toEqual(result2);
 });
 
 test('it should cache data with pipe', async () => {

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.wrapRequest = exports.WrapRequest = exports.__wrapRequestDebug__ = void 0;
+exports.wrapRequest = exports.WrapRequest = exports.__wrapRequest__ = exports.__wrapRequestDebug__ = void 0;
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj) {
     if (!obj)
@@ -32,13 +32,15 @@ function isEmpty(obj) {
 }
 let cache = {};
 exports.__wrapRequestDebug__ = {
+    wrapRequests: []
+};
+exports.__wrapRequest__ = {
     cache: {
         clear: () => {
             cache = {};
         },
         contents: cache
-    },
-    wrapRequests: []
+    }
 };
 class WrapRequest {
     constructor(req, options) {
@@ -141,7 +143,9 @@ class WrapRequest {
                 ? this.xhrVersion
                 : ++this.xhrVersion;
             const cacheKey = this.getCacheKey(params);
-            const cacheData = this.getCachedData(params);
+            const cacheData = (options === null || options === void 0 ? void 0 : options.ignoreCache)
+                ? undefined
+                : this.getCachedData(params);
             this.requestParams = params;
             this.error = undefined;
             const setFetched = (result) => {
@@ -309,12 +313,10 @@ class WrapRequest {
         wr.parent = this;
         return wr;
     }
-    disposeCache(key) {
+    disposeCache() {
+        const key = this.getCacheKey(this.requestParams);
         if (key) {
             delete cache[key];
-        }
-        else {
-            cache = {};
         }
     }
 }

@@ -13,18 +13,21 @@ interface InternalOptions<$, $$, MD> extends Options<$, MD> {
 export interface RequestOptions {
     stateLoading?: boolean;
     throwError?: boolean;
+    ignoreCache?: boolean;
     context: WrapRequest;
     __ignoreXhrVersion__?: boolean;
 }
 export declare type RequestFn<$, P> = (params: P, options: RequestOptions) => Promise<$>;
 export declare const __wrapRequestDebug__: {
+    wrapRequests: WrapRequest<any, any, any, any>[];
+};
+export declare const __wrapRequest__: {
     cache: {
         clear: () => void;
         contents: {
             [key: string]: any;
         };
     };
-    wrapRequests: WrapRequest<any, any, any, any>[];
 };
 declare type RESULT<$, $$> = $$ extends any ? $$ : $;
 export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
@@ -67,7 +70,7 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
      * Return a new copy of the wrap-request with a transformed `$` / `result`
      */
     pipe<NEW_$$ = any>(transform: ($: RESULT<$, $$>) => NEW_$$): WrapRequest<$, P, NEW_$$, MD>;
-    disposeCache(key?: string): void;
+    disposeCache(): void;
 }
 /**
  * @param request The request to perform when calling `wrapRequest.request`
