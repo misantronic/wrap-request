@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.1.0](https://github.com/misantronic/wrap-request/compare/v6.0.5...v6.1.0) (2022-09-30)
+
+
+### Features
+
+* add `ignore-cache`-option to request; optimize `disposeCache`-method ([20fabae](https://github.com/misantronic/wrap-request/commit/20fabaeb7c1548fb93f17e0105e578258da09c4b))
+
 ### [6.0.5](https://github.com/misantronic/wrap-request/compare/v6.0.4...v6.0.5) (2022-09-20)
 
 
