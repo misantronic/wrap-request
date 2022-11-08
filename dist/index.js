@@ -330,10 +330,10 @@ function wrapRequest(request, options) {
 }
 exports.wrapRequest = wrapRequest;
 wrapRequest.stream = function (request) {
-    const wr = wrapRequest((_, { context }) => {
+    const wr = wrapRequest((params, { context }) => {
         return new Promise((resolve, reject) => {
             try {
-                request((val) => (context._$ = val), (val) => resolve(val));
+                request((val) => (context._$ = val), (val) => resolve(val), params);
             }
             catch (e) {
                 reject(e);

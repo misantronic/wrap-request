@@ -78,7 +78,7 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
  */
 export declare function wrapRequest<$, P = any, $$ = $, MD = any>(request: RequestFn<$, P>, options?: Options<$, MD>): WrapRequest<$, P, $$, MD>;
 export declare namespace wrapRequest {
-    var stream: <$>(request: StreamFn<$>) => WrapRequest<$, any, $, any>;
+    var stream: <$, P extends unknown = undefined>(request: StreamFn<$, P>) => WrapRequest<$, P, $, any>;
 }
-declare type StreamFn<$> = (update: ($: $) => void, resolve: ($: $) => void) => Promise<void> | void;
+declare type StreamFn<$, P> = (update: ($: $) => void, resolve: ($: $) => void, params: P) => Promise<void> | void;
 export {};

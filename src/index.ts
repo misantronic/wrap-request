@@ -369,18 +369,22 @@ export function wrapRequest<
     return new WrapRequest<$, P, $$, MD>(request, options);
 }
 
-type StreamFn<$> = (
+type StreamFn<$, P> = (
     update: ($: $) => void,
-    resolve: ($: $) => void
+    resolve: ($: $) => void,
+    params: P
 ) => Promise<void> | void;
 
-wrapRequest.stream = function <$>(request: StreamFn<$>) {
-    const wr = wrapRequest<$>((_, { context }) => {
+wrapRequest.stream = function <$, P extends any = undefined>(
+    request: StreamFn<$, P>
+) {
+    const wr = wrapRequest<$, P>((params, { context }) => {
         return new Promise((resolve, reject) => {
             try {
                 request(
                     (val) => (context._$ = val),
-                    (val) => resolve(val)
+                    (val) => resolve(val),
+                    params
                 );
             } catch (e) {
                 reject(e);

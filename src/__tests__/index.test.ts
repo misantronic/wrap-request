@@ -728,6 +728,16 @@ test('it should stream data', async () => {
     expect(wr.fetched).toBeTruthy();
 });
 
+test('it should stream with parameters', async () => {
+    const wr = wrapRequest.stream((_update, resolve, params: number) => {
+        resolve(params);
+    });
+
+    await wr.request(1);
+
+    expect(wr.$).toEqual(1);
+});
+
 test('it should stream data with error', async () => {
     const wr = wrapRequest.stream(() => {
         throw new Error('error 12');
