@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.2.0](https://github.com/misantronic/wrap-request/compare/v6.1.0...v6.2.0) (2022-11-08)
+
+
+### Features
+
+* add first version of `wrapRequest.stream` ([1c6630f](https://github.com/misantronic/wrap-request/commit/1c6630fcd94e3d77ee7074d0dd9ddcb026471471))
+
 ## [6.1.0](https://github.com/misantronic/wrap-request/compare/v6.0.5...v6.1.0) (2022-09-30)
 
 
