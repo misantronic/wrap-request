@@ -707,3 +707,33 @@ test('it should pipe with match (error)', async () => {
 
     expect(match).toEqual('Error');
 });
+
+test('it should stream data', async () => {
+    const wr = wrapRequest.stream<number[]>((update, resolve) => {
+        setTimeout(() => update([1]), 100);
+        setTimeout(() => update([1, 2]), 200);
+        setTimeout(() => update([1, 2, 3]), 300);
+        setTimeout(() => resolve([1, 2, 3, 4]), 500);
+    });
+
+    setTimeout(() => expect(wr.$).toEqual([1]), 150);
+    setTimeout(() => expect(wr.$).toEqual([1, 2]), 250);
+    setTimeout(() => expect(wr.$).toEqual([1, 2, 3]), 350);
+
+    setTimeout(() => expect(wr.loading).toBeTruthy(), 100);
+
+    const $ = await wr.request();
+
+    expect($).toEqual([1, 2, 3, 4]);
+    expect(wr.fetched).toBeTruthy();
+});
+
+test('it should stream data with error', async () => {
+    const wr = wrapRequest.stream(() => {
+        throw new Error('error 12');
+    });
+
+    await wr.request();
+
+    expect(wr.error?.message).toEqual('error 12');
+});

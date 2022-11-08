@@ -329,4 +329,17 @@ function wrapRequest(request, options) {
     return new WrapRequest(request, options);
 }
 exports.wrapRequest = wrapRequest;
+wrapRequest.stream = function (request) {
+    const wr = wrapRequest((_, { context }) => {
+        return new Promise((resolve, reject) => {
+            try {
+                request((val) => (context._$ = val), (val) => resolve(val));
+            }
+            catch (e) {
+                reject(e);
+            }
+        });
+    });
+    return wr;
+};
 //# sourceMappingURL=index.js.map
