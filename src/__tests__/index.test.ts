@@ -729,9 +729,11 @@ test('it should stream data', async () => {
 });
 
 test('it should stream with parameters', async () => {
-    const wr = wrapRequest.stream((_update, resolve, params: number) => {
-        resolve(params);
-    });
+    const wr = wrapRequest.stream<number, number>(
+        (_update, resolve, params) => {
+            resolve(params);
+        }
+    );
 
     await wr.request(1);
 
