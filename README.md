@@ -110,6 +110,26 @@ await wrappedXhr.request();
 console.log(wrappedXhr.metadata);
 ```
 
+## streaming
+
+The nature of promises is to resolve data only once. In some cases you need to update resolve multiple times f.e. when working with websockets. Enter streaming.
+
+```js
+import websocket from 'my-websocket-lib';
+
+const streamWr = wrapRequest.stream<{}, { id: string }>((update, resolve, params) => {
+    websocket.on('update', updatedData => update(JSON.parse(updatedData)));
+    websocket.on('close', () => resolve({}));
+    websocket.connect(params.id);
+});
+
+streamWr.on('update', (data) => console.log('update', data));
+streamWr.on('resolve', (data) => console.log('resolve', data));
+streamWr.request({ id: 'ABCD1234HIJK' });
+```
+
+When working with `mobx-wrap-request`, all observable-values are updated when calling `update` / `resolve` that means when rendering data, you may not need events but receive streamlined updates in your component.
+
 # react hook
 
 There is an implementation for working with react-hooks inside your components. [react-wrap-request](https://github.com/misantronic/react-wrap-request)
