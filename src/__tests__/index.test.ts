@@ -749,3 +749,15 @@ test('it should stream data with error', async () => {
 
     expect(wr.error?.message).toEqual('error 12');
 });
+
+test('it should stream with events', async () => {
+    const wr = wrapRequest.stream<number[]>((update, resolve) => {
+        setTimeout(() => update([1]), 100);
+        setTimeout(() => resolve([1, 2]), 200);
+    });
+
+    wr.on('update', (data) => expect(data).toEqual([1]));
+    wr.on('resolve', (data) => expect(data).toEqual([1, 2]));
+
+    await wr.request();
+});

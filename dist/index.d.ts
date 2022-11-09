@@ -78,7 +78,17 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
  */
 export declare function wrapRequest<$, P = any, $$ = $, MD = any>(request: RequestFn<$, P>, options?: Options<$, MD>): WrapRequest<$, P, $$, MD>;
 export declare namespace wrapRequest {
-    var stream: <$, P extends unknown = undefined>(request: StreamFn<$, P>) => WrapRequest<$, P, $, any>;
+    var stream: <$, P extends unknown = undefined>(request: StreamFn<$, P>) => WrapRequestStream<$, P>;
 }
 declare type StreamFn<$, P> = (update: ($: $) => void, resolve: ($: $) => void, params: P) => Promise<void> | void;
+declare type StreamType = 'update' | 'resolve';
+declare type StreamHandler<$> = (val: $) => void;
+declare type StreamUnsubscribe = () => void;
+export declare class WrapRequestStream<$, P> extends WrapRequest<$, P> {
+    private listeners;
+    constructor(request: StreamFn<$, P>);
+    on(type: StreamType, cb: StreamHandler<$>): StreamUnsubscribe;
+    private invokeUpdate;
+    private invokeResolve;
+}
 export {};

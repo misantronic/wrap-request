@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.wrapRequest = exports.WrapRequest = exports.__wrapRequest__ = exports.__wrapRequestDebug__ = void 0;
+exports.WrapRequestStream = exports.wrapRequest = exports.WrapRequest = exports.__wrapRequest__ = exports.__wrapRequestDebug__ = void 0;
 /** @see https://stackoverflow.com/a/4994244/1138860 */
 function isEmpty(obj) {
     if (!obj)
@@ -329,17 +329,52 @@ function wrapRequest(request, options) {
     return new WrapRequest(request, options);
 }
 exports.wrapRequest = wrapRequest;
-wrapRequest.stream = function (request) {
-    const wr = wrapRequest((params, { context }) => {
-        return new Promise((resolve, reject) => {
-            try {
-                request((val) => (context._$ = val), (val) => resolve(val), params);
-            }
-            catch (e) {
-                reject(e);
-            }
+class WrapRequestStream extends WrapRequest {
+    constructor(request) {
+        super((params, { context }) => {
+            return new Promise((resolve, reject) => {
+                try {
+                    request((val) => {
+                        context._$ = val;
+                        this.invokeUpdate(val);
+                    }, (val) => {
+                        this.invokeResolve(val);
+                        resolve(val);
+                    }, params);
+                }
+                catch (e) {
+                    reject(e);
+                }
+            });
         });
-    });
-    return wr;
+        Object.defineProperty(this, "listeners", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: []
+        });
+    }
+    on(type, cb) {
+        const listener = { type, cb };
+        this.listeners = [...this.listeners, listener];
+        return () => {
+            this.listeners = this.listeners.filter((l) => l === listener);
+        };
+    }
+    invokeUpdate(val) {
+        this.listeners
+            .filter(({ type }) => type === 'update')
+            .forEach(({ cb }) => cb(val));
+    }
+    invokeResolve(val) {
+        this.listeners
+            .filter(({ type }) => type === 'resolve')
+            .forEach(({ cb }) => cb(val));
+        this.listeners = [];
+    }
+}
+exports.WrapRequestStream = WrapRequestStream;
+wrapRequest.stream = function (request) {
+    return new WrapRequestStream(request);
 };
 //# sourceMappingURL=index.js.map

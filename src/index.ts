@@ -375,22 +375,63 @@ type StreamFn<$, P> = (
     params: P
 ) => Promise<void> | void;
 
+type StreamType = 'update' | 'resolve';
+type StreamHandler<$> = (val: $) => void;
+type StreamUnsubscribe = () => void;
+
+export class WrapRequestStream<$, P> extends WrapRequest<$, P> {
+    private listeners: { type: StreamType; cb: StreamHandler<$> }[] = [];
+
+    constructor(request: StreamFn<$, P>) {
+        super((params, { context }) => {
+            return new Promise((resolve, reject) => {
+                try {
+                    request(
+                        (val) => {
+                            context._$ = val;
+
+                            this.invokeUpdate(val);
+                        },
+                        (val) => {
+                            this.invokeResolve(val);
+                            resolve(val);
+                        },
+                        params
+                    );
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        });
+    }
+
+    public on(type: StreamType, cb: StreamHandler<$>): StreamUnsubscribe {
+        const listener = { type, cb };
+
+        this.listeners = [...this.listeners, listener];
+
+        return () => {
+            this.listeners = this.listeners.filter((l) => l === listener);
+        };
+    }
+
+    private invokeUpdate(val: $) {
+        this.listeners
+            .filter(({ type }) => type === 'update')
+            .forEach(({ cb }) => cb(val));
+    }
+
+    private invokeResolve(val: $) {
+        this.listeners
+            .filter(({ type }) => type === 'resolve')
+            .forEach(({ cb }) => cb(val));
+
+        this.listeners = [];
+    }
+}
+
 wrapRequest.stream = function <$, P extends any = undefined>(
     request: StreamFn<$, P>
 ) {
-    const wr = wrapRequest<$, P>((params, { context }) => {
-        return new Promise((resolve, reject) => {
-            try {
-                request(
-                    (val) => (context._$ = val),
-                    (val) => resolve(val),
-                    params
-                );
-            } catch (e) {
-                reject(e);
-            }
-        });
-    });
-
-    return wr;
+    return new WrapRequestStream<$, P>(request);
 };
