@@ -149,6 +149,7 @@ class WrapRequest {
             this.requestParams = params;
             this.error = undefined;
             const setFetched = (result) => {
+                var _a, _b;
                 this._$ = result;
                 if (this.options.metadata) {
                     this._metadata = this.options.metadata(result);
@@ -157,6 +158,7 @@ class WrapRequest {
                 if (cacheKey) {
                     cache[cacheKey] = this._$;
                 }
+                (_b = (_a = this.options).transform) === null || _b === void 0 ? void 0 : _b.call(_a, result);
             };
             try {
                 if (cacheData) {
@@ -190,13 +192,8 @@ class WrapRequest {
         const { defaultData, transform } = this.options;
         if (transform) {
             if (this.state === 'fetched') {
-                try {
-                    const parent_$ = ((_c = (_a = this.parent) === null || _a === void 0 ? void 0 : (_b = _a.options).transform) === null || _c === void 0 ? void 0 : _c.call(_b, this._$)) || this._$;
-                    return (transform(parent_$) || defaultData);
-                }
-                catch (e) {
-                    this.error = e;
-                }
+                const parent_$ = ((_c = (_a = this.parent) === null || _a === void 0 ? void 0 : (_b = _a.options).transform) === null || _c === void 0 ? void 0 : _c.call(_b, this._$)) || this._$;
+                return (transform(parent_$) || defaultData);
             }
             return defaultData;
         }

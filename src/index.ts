@@ -144,6 +144,8 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
             if (cacheKey) {
                 cache[cacheKey] = this._$;
             }
+
+            this.options.transform?.(result);
         };
 
         try {
@@ -180,17 +182,10 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
 
         if (transform) {
             if (this.state === 'fetched') {
-                try {
-                    const parent_$ =
-                        this.parent?.options.transform?.(this._$) || this._$;
+                const parent_$ =
+                    this.parent?.options.transform?.(this._$) || this._$;
 
-                    return (transform(parent_$) || defaultData) as RESULT<
-                        $,
-                        $$
-                    >;
-                } catch (e) {
-                    this.error = e as Error;
-                }
+                return (transform(parent_$) || defaultData) as RESULT<$, $$>;
             }
 
             return defaultData;
