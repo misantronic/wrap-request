@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.2.3](https://github.com/misantronic/wrap-request/compare/v6.2.2...v6.2.3) (2023-03-13)
+
+
+### Bug Fixes
+
+* remove error-setting in transform/pipe-function ([7f3800b](https://github.com/misantronic/wrap-request/commit/7f3800b78a1a95de733b3b58fa75cf2427d60f65))
+
 ### [6.2.2](https://github.com/misantronic/wrap-request/compare/v6.2.1...v6.2.2) (2022-11-09)
 
 
