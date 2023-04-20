@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.0](https://github.com/misantronic/wrap-request/compare/v6.2.3...v7.0.0) (2023-04-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* when `options.defaultData` is undefined, the result of a wrap-request can always be undefined.
+
+### Features
+
+* consider default-data in types ([2b5e80b](https://github.com/misantronic/wrap-request/commit/2b5e80bdde48df0f8fb4c36c9b107a1ff7484bb7))
+
 ### [6.2.3](https://github.com/misantronic/wrap-request/compare/v6.2.2...v6.2.3) (2023-03-13)
 
 
