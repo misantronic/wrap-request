@@ -2,6 +2,7 @@
 
 a request wrapper for asynchronous operations
 
+
 ## basic usage
 
 ```js
@@ -45,6 +46,7 @@ const MyComponent = () => {
 ## default data
 
 especially when dealing with lists it comes in handy to set a default value.
+from v7.0.0 on, when not setting `defaultData`, all of your data will be undefined by default when directly accessing it.
 
 ```js
 const wrappedXhr = wrapRequest(() => fetch('...'), { defaultData: [] });
@@ -138,3 +140,28 @@ There is an implementation for working with react-hooks inside your components. 
 
 wrap-request used to have a direct dependency on mobx. this was removed in 3.0.0
 please use [mobx-wrap-request](https://github.com/misantronic/mobx-wrap-request) for further support.
+
+# pitfalls
+
+## typescript
+
+please avoid setting your own generics when using `wrapRequest`. 
+The problem here is, if you don't set all of the generics, chances are high that automatic [type-inference will break](https://stackoverflow.com/a/63678777/1138860).
+
+❌ don't:
+
+```ts
+wrapRequest<MyArray[]>(() => [], { defaultData: [] });
+```
+
+✅ do:
+
+```ts
+wrapRequest(() => [] as MyArray[], { defaultData: [] });
+```
+
+If you really need to override all the generics, better make sure to set all of them:
+
+```ts
+wrapRequest<MyArray[], any, MyArray[], any, never[]>(() => []);
+```
