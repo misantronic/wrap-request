@@ -5,7 +5,7 @@
     "main": "dist/index.js",
     "scripts": {
         "prestart": "npm test",
-        "start": "tsc -p . && rm -rf dist/__tests__ && npm run minify",
+        "start": "tsc -p . && npm run minify",
         "minify": "uglifyjs --compress --mangle --output dist/index.js --source-map -- dist/index.js",
         "test": "jest",
         "release": "standard-version && git push",
