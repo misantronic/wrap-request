@@ -159,7 +159,7 @@ test('it should set default data', async () => {
     expect(wrap.$).toEqual([]);
 });
 
-test('it should set default data when request errors', async () => {
+test('it should not set default data when request errors', async () => {
     const wrap = wrapRequest(
         async (): Promise<any[]> => {
             throw new Error('Error');
@@ -169,7 +169,7 @@ test('it should set default data when request errors', async () => {
 
     await wrap.request();
 
-    expect(wrap.$).toEqual([]);
+    expect(wrap.$).toEqual(undefined);
 });
 
 test('it should transform data', async () => {
@@ -184,6 +184,7 @@ test('it should transform data', async () => {
     const data = await wrap.request();
 
     expect(wrap.$).toEqual({ id: 1, name: 'Foo' });
+    expect(wrap.source).toEqual([{ id: 1, name: 'Foo' }]);
     expect(data).toEqual({ id: 1, name: 'Foo' });
 });
 
@@ -206,7 +207,7 @@ test('it should transform data with different type', async () => {
             new Promise<{ content: number[] }>((resolve) =>
                 setTimeout(() => resolve({ content: [1, 2, 3] }), 0)
             ),
-        { defaultData: [] }
+        { defaultData: { content: [] } }
     ).pipe((res) => res.content || []);
 
     const data = await wrap.request();
@@ -261,7 +262,7 @@ test('it should cache data with pipe', async () => {
                 setTimeout(() => resolve({ id: 1, name: 'Foo' }), 50)
             ),
         { cacheKey: 'test' }
-    ).pipe((obj) => obj.name);
+    ).pipe((obj) => obj?.name);
 
     await wrap.request();
 
@@ -482,12 +483,12 @@ test('it should set metadata', async () => {
 test('it should get metadata (and ignore the transformed value)', async () => {
     const wrap = wrapRequest(async () => [5], {
         metadata: (res) => ({ num: res[0] })
-    }).pipe((res) => res[0]);
+    }).pipe((res) => res?.[0]);
 
     await wrap.request();
 
     expect(wrap.$).toEqual(5);
-    expect(wrap.metadata!.num).toEqual(5);
+    expect(wrap.metadata?.num).toEqual(5);
 });
 
 test('it should reset', async () => {
@@ -568,7 +569,7 @@ test('it should access requestParams', () => {
 });
 
 test('it should access source', async () => {
-    const wrap = wrapRequest(async () => [1]).pipe((data) => data[0]);
+    const wrap = wrapRequest(async () => [1]).pipe((data) => data?.[0]);
 
     await wrap.request();
 
@@ -592,16 +593,30 @@ test('it should access context', async () => {
     expect(wrap.$).toEqual(6);
 });
 
-test('it should pipe with result', async () => {
+test('it should pipe with result on unfetched', async () => {
     const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
 
     wrap.request();
 
     const pipedWR = wrap.pipe((res) => res[0]);
 
+    expect(wrap.$).toEqual([]);
     expect(pipedWR.loading).toBe(true);
     expect(pipedWR.fetched).toBe(false);
-    expect(pipedWR.$).toEqual([]);
+    expect(pipedWR.$).toEqual(undefined);
+});
+
+test('it should pipe with result (overwrite default data)', async () => {
+    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+
+    wrap.request();
+
+    const pipedWR = wrap.pipe((res) => res[0]);
+
+    expect(wrap.$).toEqual([]);
+    expect(pipedWR.loading).toBe(true);
+    expect(pipedWR.fetched).toBe(false);
+    expect(pipedWR.$).toEqual(undefined);
 });
 
 test('it should pipe without request', async () => {
@@ -614,11 +629,11 @@ test('it should pipe without request', async () => {
 });
 
 test('it should pipe after request', async () => {
-    const wrap = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+    const wrap = wrapRequest(async () => [1, 2, 3]);
 
     await wrap.request();
 
-    const pipedWR = wrap.pipe((res) => res[0]);
+    const pipedWR = wrap.pipe((res) => res?.[0]);
 
     expect(pipedWR.$).toBe(1);
     expect(pipedWR.source).toEqual([1, 2, 3]);
@@ -644,7 +659,7 @@ test('it should pipe multiple times', async () => {
         (res) => res[0]
     );
 
-    const strigifiedWrap = wrap.pipe((res) => res.toString());
+    const strigifiedWrap = wrap.pipe((res) => res?.toString());
 
     await wrap.request();
 
@@ -673,6 +688,7 @@ test('it should pipe with match (loading)', async () => {
     wrap.request();
 
     const pipedWR = wrap.pipe((res) => res[0]);
+
     const match = pipedWR.match({
         loading: () => 'Loading'
     });

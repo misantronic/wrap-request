@@ -1,15 +1,15 @@
 export type WrapRequestState = 'loading' | 'fetched' | 'error';
 
-export interface Options<$, MD> {
+export interface Options<$, MD, DD> {
     /** set a default value for `wrapRequest.$` e.g. `[]` */
-    defaultData?: any;
+    defaultData?: DD;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
     /** a function which return value will be set as metadata */
     metadata?: ($: $) => MD;
 }
 
-interface InternalOptions<$, $$, MD> extends Options<$, MD> {
+interface InternalOptions<$, $$, MD, DD> extends Options<$, MD, DD> {
     transform?: ($: $) => $$;
 }
 
@@ -55,9 +55,19 @@ export const __wrapRequest__ = {
     }
 };
 
-type RESULT<$, $$> = $$ extends any ? $$ : $;
+type KILL_NEVER<$$, DD> = DD extends never[]
+    ? $$ extends any[]
+        ? $$
+        : DD
+    : DD;
 
-export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
+type RESULT<$$, DD> = DD extends undefined
+    ? $$ | undefined
+    : DD extends any
+    ? $$
+    : $$ | KILL_NEVER<$$, DD>;
+
+export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     public _$!: $;
     public error?: Error;
     public state?: WrapRequestState;
@@ -66,11 +76,14 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
 
     private xhrVersion = 0;
     private _metadata?: MD;
-    private options: InternalOptions<$, $$, MD> = {};
+    private options: InternalOptions<$, $$, MD, DD> = {};
     private req: RequestFn<$, P>;
-    private parent?: WrapRequest<$, P, any, MD>;
+    private parent?: WrapRequest;
 
-    constructor(req: RequestFn<$, P>, options?: InternalOptions<$, $$, MD>) {
+    constructor(
+        req: RequestFn<$, P>,
+        options?: InternalOptions<$, $$, MD, DD>
+    ) {
         this.req = req;
         this.options = options || {};
 
@@ -174,10 +187,10 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
             }
         }
 
-        return this.$;
+        return this.$ as $$;
     }
 
-    public get $(): RESULT<$, $$> {
+    public get $(): RESULT<$$, DD> {
         const { defaultData, transform } = this.options;
 
         if (transform) {
@@ -185,13 +198,13 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
                 const parent_$ =
                     this.parent?.options.transform?.(this._$) || this._$;
 
-                return (transform(parent_$) || defaultData) as RESULT<$, $$>;
+                return (transform(parent_$) || defaultData) as RESULT<$$, DD>;
             }
 
-            return defaultData;
+            return defaultData as RESULT<$$, DD>;
         }
 
-        return this._$ || defaultData;
+        return (this._$ || defaultData) as RESULT<$$, DD>;
     }
 
     /** alias for this.$ */
@@ -234,7 +247,7 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
     public match<T extends any>(handlers: {
         default?(): T;
         loading?(): T;
-        fetched?(value: RESULT<$, $$>): T;
+        fetched?(value: $$): T;
         empty?(): T;
         error?(e: Error): T;
     }): T | null {
@@ -251,7 +264,7 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
         }
 
         if (this.fetched && handlers.fetched) {
-            return handlers.fetched(this.$);
+            return handlers.fetched(this.$ as $$);
         }
 
         if (handlers.default) {
@@ -279,7 +292,7 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
         }
     }
 
-    public didFetch<T = any>(cb: ($: RESULT<$, $$>) => T) {
+    public didFetch<T = any>(cb: ($: RESULT<$$, DD>) => T) {
         if (this.fetched) {
             return cb(this.$);
         }
@@ -287,7 +300,7 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
         return null;
     }
 
-    public async when(): Promise<RESULT<$, $$>> {
+    public async when(): Promise<$$> {
         if (this.error) {
             return Promise.reject(this.error);
         }
@@ -306,17 +319,23 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
             }
         }
 
-        return this.$;
+        return this.$ as $$;
     }
 
     /**
      * Return a new copy of the wrap-request with a transformed `$` / `result`
      */
-    public pipe<NEW_$$ = any>(
-        transform: ($: RESULT<$, $$>) => NEW_$$
-    ): WrapRequest<$, P, NEW_$$, MD> {
-        const wr = new WrapRequest<$, P, NEW_$$, MD>(this.req, {
-            ...this.options,
+    public pipe<NEW_$$ = any>(transform: ($: RESULT<$$, DD>) => NEW_$$) {
+        const { defaultData, ...restOptions } = this.options;
+
+        const wr = new WrapRequest<
+            $,
+            P,
+            NEW_$$,
+            MD,
+            $ extends undefined ? NEW_$$ | undefined : NEW_$$
+        >(this.req, {
+            ...restOptions,
             transform: transform as any
         });
 
@@ -358,10 +377,11 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
 export function wrapRequest<
     $ /* result */,
     P = any /* request-parameters */,
-    $$ = $ /* transformed result */,
-    MD = any /* meta-data */
->(request: RequestFn<$, P>, options?: Options<$, MD>) {
-    return new WrapRequest<$, P, $$, MD>(request, options);
+    $$ = $ /* piped result */,
+    MD = any /* meta-data */,
+    DD = undefined /* default-data */
+>(request: RequestFn<$, P>, options?: Options<$, MD, DD>) {
+    return new WrapRequest<$, P, $$, MD, DD>(request, options);
 }
 
 type StreamFn<$, P> = (

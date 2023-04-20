@@ -1,13 +1,13 @@
 export declare type WrapRequestState = 'loading' | 'fetched' | 'error';
-export interface Options<$, MD> {
+export interface Options<$, MD, DD> {
     /** set a default value for `wrapRequest.$` e.g. `[]` */
-    defaultData?: any;
+    defaultData?: DD;
     /** when provided, the result will be globally cached  */
     cacheKey?: string;
     /** a function which return value will be set as metadata */
     metadata?: ($: $) => MD;
 }
-interface InternalOptions<$, $$, MD> extends Options<$, MD> {
+interface InternalOptions<$, $$, MD, DD> extends Options<$, MD, DD> {
     transform?: ($: $) => $$;
 }
 export interface RequestOptions {
@@ -19,7 +19,7 @@ export interface RequestOptions {
 }
 export declare type RequestFn<$, P> = (params: P, options: RequestOptions) => Promise<$>;
 export declare const __wrapRequestDebug__: {
-    wrapRequests: WrapRequest<any, any, any, any>[];
+    wrapRequests: WrapRequest<any, any, any, any, any>[];
 };
 export declare const __wrapRequest__: {
     cache: {
@@ -29,8 +29,9 @@ export declare const __wrapRequest__: {
         };
     };
 };
-declare type RESULT<$, $$> = $$ extends any ? $$ : $;
-export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
+declare type KILL_NEVER<$$, DD> = DD extends never[] ? $$ extends any[] ? $$ : DD : DD;
+declare type RESULT<$$, DD> = DD extends undefined ? $$ | undefined : DD extends any ? $$ : $$ | KILL_NEVER<$$, DD>;
+export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     _$: $;
     error?: Error;
     state?: WrapRequestState;
@@ -41,14 +42,14 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
     private options;
     private req;
     private parent?;
-    constructor(req: RequestFn<$, P>, options?: InternalOptions<$, $$, MD>);
+    constructor(req: RequestFn<$, P>, options?: InternalOptions<$, $$, MD, DD>);
     private getCacheKey;
     private getCachedData;
     private checkXhrVersion;
-    request(...[params, options]: P extends undefined ? [undefined?, Omit<RequestOptions, 'context'>?] : [P, Omit<RequestOptions, 'context'>?]): Promise<RESULT<$, $$>>;
-    get $(): RESULT<$, $$>;
+    request(...[params, options]: P extends undefined ? [undefined?, Omit<RequestOptions, 'context'>?] : [P, Omit<RequestOptions, 'context'>?]): Promise<$$>;
+    get $(): RESULT<$$, DD>;
     /** alias for this.$ */
-    get result(): RESULT<$, $$>;
+    get result(): RESULT<$$, DD>;
     get source(): $;
     get metadata(): MD | undefined;
     get loading(): boolean;
@@ -59,24 +60,24 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any> {
     match<T extends any>(handlers: {
         default?(): T;
         loading?(): T;
-        fetched?(value: RESULT<$, $$>): T;
+        fetched?(value: $$): T;
         empty?(): T;
         error?(e: Error): T;
     }): T | null;
     reset(value?: $, params?: P): void;
-    didFetch<T = any>(cb: ($: RESULT<$, $$>) => T): T | null;
-    when(): Promise<RESULT<$, $$>>;
+    didFetch<T = any>(cb: ($: RESULT<$$, DD>) => T): T | null;
+    when(): Promise<$$>;
     /**
      * Return a new copy of the wrap-request with a transformed `$` / `result`
      */
-    pipe<NEW_$$ = any>(transform: ($: RESULT<$, $$>) => NEW_$$): WrapRequest<$, P, NEW_$$, MD>;
+    pipe<NEW_$$ = any>(transform: ($: RESULT<$$, DD>) => NEW_$$): WrapRequest<$, P, NEW_$$, MD, $ extends undefined ? NEW_$$ | undefined : NEW_$$>;
     disposeCache(): void;
 }
 /**
  * @param request The request to perform when calling `wrapRequest.request`
  * @param options {Options}
  */
-export declare function wrapRequest<$, P = any, $$ = $, MD = any>(request: RequestFn<$, P>, options?: Options<$, MD>): WrapRequest<$, P, $$, MD>;
+export declare function wrapRequest<$, P = any, $$ = $, MD = any, DD = undefined>(request: RequestFn<$, P>, options?: Options<$, MD, DD>): WrapRequest<$, P, $$, MD, DD>;
 export declare namespace wrapRequest {
     var stream: <$, P extends unknown = undefined>(request: StreamFn<$, P>) => WrapRequestStream<$, P>;
 }
