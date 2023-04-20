@@ -5,7 +5,7 @@
         "lib": ["dom", "es2015", "es2016", "es2017", "esnext"],
         "jsx": "react",
         "declaration": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "outDir": "./dist",
         "rootDir": "./src",
         "importHelpers": false,

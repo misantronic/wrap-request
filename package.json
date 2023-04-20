@@ -4,7 +4,8 @@
     "description": "a request wrapper for asynchronous operations",
     "main": "dist/index.js",
     "scripts": {
-        "start": "npm test && tsc -p . && rm -rf dist/__tests__",
+        "start": "npm test && tsc -p . && rm -rf dist/__tests__ && npm run minify",
+        "minify": "uglifyjs --compress --mangle --output dist/index.js --source-map -- dist/index.js",
         "test": "jest",
         "release": "standard-version && git push",
         "prepublish": "npm start"
@@ -28,7 +29,8 @@
         "jest": "26.6.3",
         "standard-version": "^9.1.1",
         "ts-jest": "26.5.4",
-        "typescript": "4.2.3"
+        "typescript": "4.2.3",
+        "uglify-js": "^3.17.4"
     },
     "jest": {
         "testPathIgnorePatterns": [
