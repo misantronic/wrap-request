@@ -207,7 +207,9 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     }
 
     public get source() {
-        return this._$ as RESULT<$, DD>;
+        const { defaultData } = this.options;
+
+        return (this._$ ?? defaultData) as RESULT<$, DD>;
     }
 
     public get metadata() {
