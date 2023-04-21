@@ -55,17 +55,11 @@ export const __wrapRequest__ = {
     }
 };
 
-type KILL_NEVER<$$, DD> = DD extends never[]
-    ? $$ extends any[]
-        ? $$
-        : DD
-    : DD;
-
 type RESULT<$$, DD> = DD extends undefined
     ? $$ | undefined
     : DD extends any
     ? $$
-    : $$ | KILL_NEVER<$$, DD>;
+    : $$ | DD;
 
 export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     public _$!: $;
@@ -379,7 +373,7 @@ export function wrapRequest<
     P = any /* request-parameters */,
     $$ = $ /* piped result */,
     MD = any /* meta-data */,
-    DD = undefined /* default-data */
+    DD extends $ | undefined = undefined /* default-data */
 >(request: RequestFn<$, P>, options?: Options<$, MD, DD>) {
     return new WrapRequest<$, P, $$, MD, DD>(request, options);
 }
