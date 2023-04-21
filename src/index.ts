@@ -206,8 +206,8 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
         return this.$;
     }
 
-    public get source(): $ {
-        return this._$;
+    public get source() {
+        return this._$ as RESULT<$, DD>;
     }
 
     public get metadata() {

@@ -49,7 +49,7 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     get $(): RESULT<$$, DD>;
     /** alias for this.$ */
     get result(): RESULT<$$, DD>;
-    get source(): $;
+    get source(): RESULT<$, DD>;
     get metadata(): MD | undefined;
     get loading(): boolean;
     set loading(value: boolean);
