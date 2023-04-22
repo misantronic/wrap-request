@@ -806,6 +806,6 @@ test('it should check typescript-types', async () => {
     expect(typeof pipedWrap1.$).toBe('number');
     expect(typeof pipedWrap2.$).toBe('number');
 
-    // undefined pipe
+    // unfetched pipe
     expect(typeof pipedWrap3.$).toBe('undefined');
 });
