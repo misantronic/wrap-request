@@ -777,3 +777,35 @@ test('it should stream with events', async () => {
 
     await wr.request();
 });
+
+test('it should check typescript-types', async () => {
+    const wrap1 = wrapRequest(async () => [1, 2, 3], { defaultData: [] });
+    const wrap2 = wrapRequest(async () => [1, 2, 3]);
+    const wrap3 = wrapRequest(async () => [1, 2, 3]);
+
+    const pipedWrap1 = wrap1.pipe(([num]) => num);
+    const pipedWrap2 = wrap2.pipe((arr) => arr?.[0]);
+    const pipedWrap3 = wrap3.pipe((arr) => arr?.[0]);
+
+    const data1 = await wrap1.request();
+    const data2 = await wrap2.request();
+
+    // explicit fetched result
+    expect(typeof data1[0]).toBe('number');
+    expect(typeof data2[0]).toBe('number');
+
+    // implicit fetched result
+    expect(typeof wrap1.$[0]).toBe('number');
+    expect(typeof wrap2.$?.[0]).toBe('number');
+
+    // unfetched
+    expect(typeof wrap3.$).toBe('undefined');
+    expect(typeof wrap3.$?.[0]).toBe('undefined');
+
+    // piped fetched result
+    expect(typeof pipedWrap1.$).toBe('number');
+    expect(typeof pipedWrap2.$).toBe('number');
+
+    // undefined pipe
+    expect(typeof pipedWrap3.$).toBe('undefined');
+});
