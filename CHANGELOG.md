@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.0.4](https://github.com/misantronic/wrap-request/compare/v7.0.3...v7.0.4) (2023-05-22)
+
+
+### Bug Fixes
+
+* respect falsy-values when accessing `$` / `result` ([88fe72e](https://github.com/misantronic/wrap-request/commit/88fe72ea8cddeb624f1b22426b89e68e165fd108))
+
 ### [7.0.3](https://github.com/misantronic/wrap-request/compare/v7.0.2...v7.0.3) (2023-04-21)
 
 ### [7.0.2](https://github.com/misantronic/wrap-request/compare/v7.0.1...v7.0.2) (2023-04-21)
