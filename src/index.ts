@@ -83,7 +83,7 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
 
         const cacheData = this.getCachedData(this.requestParams);
 
-        this._$ = cacheData || (this.options.defaultData as any);
+        this._$ = cacheData ?? (this.options.defaultData as any);
 
         __wrapRequestDebug__.wrapRequests.push(this);
     }
@@ -190,15 +190,15 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
         if (transform) {
             if (this.state === 'fetched') {
                 const parent_$ =
-                    this.parent?.options.transform?.(this._$) || this._$;
+                    this.parent?.options.transform?.(this._$) ?? this._$;
 
-                return (transform(parent_$) || defaultData) as RESULT<$$, DD>;
+                return (transform(parent_$) ?? defaultData) as RESULT<$$, DD>;
             }
 
             return defaultData as RESULT<$$, DD>;
         }
 
-        return (this._$ || defaultData) as RESULT<$$, DD>;
+        return (this._$ ?? defaultData) as RESULT<$$, DD>;
     }
 
     /** alias for this.$ */

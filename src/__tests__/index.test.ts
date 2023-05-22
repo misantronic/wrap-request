@@ -43,6 +43,17 @@ test('it should set data', async () => {
     expect(data).toEqual(1337);
 });
 
+test('it should set data 0', async () => {
+    const wrap = wrapRequest(
+        () => new Promise<number>((resolve) => setTimeout(() => resolve(0), 0))
+    );
+
+    const data = await wrap.request();
+
+    expect(wrap.$).toEqual(0);
+    expect(data).toEqual(0);
+});
+
 test('it should set request data without loading-state', async () => {
     const wrap = wrapRequest(
         () => new Promise((resolve) => setTimeout(() => resolve(1337), 0))
