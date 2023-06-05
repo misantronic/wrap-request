@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.0.5](https://github.com/misantronic/wrap-request/compare/v7.0.4...v7.0.5) (2023-06-05)
+
+
+### Bug Fixes
+
+* piping with default-data ([672423e](https://github.com/misantronic/wrap-request/commit/672423e9577bb51c97e7e189d15dea9b87f84ef9))
+
 ### [7.0.4](https://github.com/misantronic/wrap-request/compare/v7.0.3...v7.0.4) (2023-05-22)
 
 
