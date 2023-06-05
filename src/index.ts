@@ -321,17 +321,34 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     /**
      * Return a new copy of the wrap-request with a transformed `$` / `result`
      */
-    public pipe<NEW_$$ = any>(transform: ($: RESULT<$$, DD>) => NEW_$$) {
+    public pipe<NEW_$$ = any, NEW_DD = DD>(
+        transform: ($: RESULT<$$, DD>) => NEW_$$,
+        options?: { defaultData: NEW_DD }
+    ) {
         const { defaultData, ...restOptions } = this.options;
+        const newDefaultData = (() => {
+            if (options) {
+                return options?.hasOwnProperty('defaultData')
+                    ? options.defaultData
+                    : defaultData;
+            }
+
+            return defaultData;
+        })();
 
         const wr = new WrapRequest<
             $,
             P,
             NEW_$$,
             MD,
-            $ extends undefined ? NEW_$$ | undefined : NEW_$$
+            NEW_DD extends any
+                ? NEW_DD
+                : $ extends undefined
+                ? NEW_$$ | undefined
+                : NEW_$$
         >(this.req, {
             ...restOptions,
+            defaultData: newDefaultData as any,
             transform: transform as any
         });
 

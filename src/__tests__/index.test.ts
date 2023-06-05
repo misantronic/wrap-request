@@ -170,27 +170,14 @@ test('it should set default data', async () => {
     expect(wrap.$).toEqual([]);
 });
 
-test('it should not set default data when request errors', async () => {
-    const wrap = wrapRequest(
-        async (): Promise<any[]> => {
-            throw new Error('Error');
-        },
-        { defaultData: [] }
-    ).pipe((data) => data.filter((x) => x));
-
-    await wrap.request();
-
-    expect(wrap.$).toEqual(undefined);
-});
-
-test('it should transform data', async () => {
+test('it should pipe data', async () => {
     const wrap = wrapRequest(
         () =>
             new Promise<Obj[]>((resolve) =>
                 setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
             ),
         { defaultData: [] }
-    ).pipe((res) => res[0]);
+    ).pipe((res) => res[0], { defaultData: undefined });
 
     const data = await wrap.request();
 
@@ -199,7 +186,23 @@ test('it should transform data', async () => {
     expect(data).toEqual({ id: 1, name: 'Foo' });
 });
 
-test('it should fail to transform data', async () => {
+test('it should pipe data 2', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise<Obj[]>((resolve) =>
+                setTimeout(() => resolve([{ id: 1, name: 'Foo' }]), 0)
+            ),
+        { defaultData: [] }
+    ).pipe((res) => res.filter(Boolean));
+
+    const data = await wrap.request();
+
+    expect(wrap.$).toEqual([{ id: 1, name: 'Foo' }]);
+    expect(wrap.source).toEqual([{ id: 1, name: 'Foo' }]);
+    expect(data).toEqual([{ id: 1, name: 'Foo' }]);
+});
+
+test('it should fail to piped data', async () => {
     const wrap = wrapRequest(
         () =>
             new Promise<Obj[]>((_, reject) =>
@@ -212,7 +215,7 @@ test('it should fail to transform data', async () => {
     expect(wrap.$).toEqual(undefined);
 });
 
-test('it should transform data with different type', async () => {
+test('it should pipe data with different type', async () => {
     const wrap = wrapRequest(
         () =>
             new Promise<{ content: number[] }>((resolve) =>
@@ -609,7 +612,7 @@ test('it should pipe with result on unfetched', async () => {
 
     wrap.request();
 
-    const pipedWR = wrap.pipe((res) => res[0]);
+    const pipedWR = wrap.pipe((res) => res[0], { defaultData: undefined });
 
     expect(wrap.$).toEqual([]);
     expect(pipedWR.loading).toBe(true);
@@ -622,7 +625,7 @@ test('it should pipe with result (overwrite default data)', async () => {
 
     wrap.request();
 
-    const pipedWR = wrap.pipe((res) => res[0]);
+    const pipedWR = wrap.pipe((res) => res[0], { defaultData: undefined });
 
     expect(wrap.$).toEqual([]);
     expect(pipedWR.loading).toBe(true);

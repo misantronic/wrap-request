@@ -69,7 +69,9 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     /**
      * Return a new copy of the wrap-request with a transformed `$` / `result`
      */
-    pipe<NEW_$$ = any>(transform: ($: RESULT<$$, DD>) => NEW_$$): WrapRequest<$, P, NEW_$$, MD, $ extends undefined ? NEW_$$ | undefined : NEW_$$>;
+    pipe<NEW_$$ = any, NEW_DD = DD>(transform: ($: RESULT<$$, DD>) => NEW_$$, options?: {
+        defaultData: NEW_DD;
+    }): WrapRequest<$, P, NEW_$$, MD, NEW_DD extends any ? NEW_DD : $ extends undefined ? NEW_$$ | undefined : NEW_$$>;
     disposeCache(): void;
 }
 /**
