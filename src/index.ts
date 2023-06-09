@@ -288,9 +288,9 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
         }
     }
 
-    public didFetch<T = any>(cb: ($: RESULT<$$, DD>) => T) {
+    public didFetch<T = any>(cb: ($: $$) => T) {
         if (this.fetched) {
-            return cb(this.$);
+            return cb(this.$ as $$);
         }
 
         return null;
