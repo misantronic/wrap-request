@@ -64,7 +64,7 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
         error?(e: Error): T;
     }): T | null;
     reset(value?: $, params?: P): void;
-    didFetch<T = any>(cb: ($: RESULT<$$, DD>) => T): T | null;
+    didFetch<T = any>(cb: ($: $$) => T): T | null;
     when(): Promise<$$>;
     /**
      * Return a new copy of the wrap-request with a transformed `$` / `result`
