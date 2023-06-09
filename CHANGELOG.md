@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.0.6](https://github.com/misantronic/wrap-request/compare/v7.0.5...v7.0.6) (2023-06-09)
+
+
+### Bug Fixes
+
+* update return-type of `didFetch` ([eff137a](https://github.com/misantronic/wrap-request/commit/eff137a0d296e4e2d975e420b3c7b77bd855e4af))
+
 ### [7.0.5](https://github.com/misantronic/wrap-request/compare/v7.0.4...v7.0.5) (2023-06-05)
 
 
