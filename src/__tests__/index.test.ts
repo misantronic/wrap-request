@@ -559,6 +559,12 @@ test('it should reset xhr', async () => {
     expect(wrap.xhr).toBeUndefined();
 });
 
+test('it should work with optional params', () => {
+    const wrap = wrapRequest(async (params?: number) => params ?? 0);
+
+    wrap.request();
+});
+
 test('it should reset requestParams', async () => {
     const wrap = wrapRequest(
         async (params: { timeout: number }) => params.timeout

@@ -277,7 +277,8 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
         this.error = undefined;
         this.xhr = undefined;
         this.requestParams = undefined;
-        this.state = isEmpty(value) ? undefined : 'fetched';
+        this.state =
+            value === undefined || value === null ? undefined : 'fetched';
 
         if (cacheKey) {
             cache[cacheKey] = undefined;
