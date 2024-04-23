@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.0.7](https://github.com/misantronic/wrap-request/compare/v7.0.6...v7.0.7) (2024-04-23)
+
+
+### Bug Fixes
+
+* set state in reset depending on passed `value` -> remove `isEmpty`-check ([a8473ee](https://github.com/misantronic/wrap-request/commit/a8473eef983f06dd46259cd5bf8e5b54ed3d6b6e))
+
 ### [7.0.6](https://github.com/misantronic/wrap-request/compare/v7.0.5...v7.0.6) (2023-06-09)
 
 
