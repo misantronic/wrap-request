@@ -181,6 +181,8 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
                 this.state = 'error';
             }
             if (throwError) {
+                this.clearInternalErrorAccess();
+
                 throw e;
             }
         }
@@ -188,12 +190,16 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
         return this.$ as $$;
     }
 
-    public get error(): Error | undefined {
+    private clearInternalErrorAccess() {
         if (this.internalErrorAccess !== undefined) {
             clearTimeout(this.internalErrorAccess);
 
             this.internalErrorAccess = undefined;
         }
+    }
+
+    public get error(): Error | undefined {
+        this.clearInternalErrorAccess();
 
         return this.internalError;
     }

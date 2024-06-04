@@ -852,3 +852,26 @@ test('it should track access of an error', async (done) => {
         done();
     }, 16);
 });
+
+test("it shouldn't track access of an error when error is thrown", async (done) => {
+    __wrapRequest__.UNHANDLED_ERROR_WARNING = true;
+    __wrapRequest__.UNHANDLED_ERROR_WARNING_TIMEOUT = 0;
+
+    const spy = spyOn(console, 'warn');
+    const error = new Error('Error');
+    const wrap = wrapRequest(async () => {
+        throw error;
+    });
+
+    try {
+        await wrap.request(undefined, { throwError: true });
+    } catch (e) {
+        // do nothing
+    }
+
+    setTimeout(() => {
+        expect(spy).toHaveBeenCalledTimes(0);
+        expect(wrap.error).toBe(error);
+        done();
+    }, 16);
+});
