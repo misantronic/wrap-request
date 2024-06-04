@@ -22,6 +22,8 @@ export declare const __wrapRequestDebug__: {
     wrapRequests: WrapRequest<any, any, any, any, any>[];
 };
 export declare const __wrapRequest__: {
+    UNHANDLED_ERROR_WARNING: boolean;
+    UNHANDLED_ERROR_WARNING_TIMEOUT: number;
     cache: {
         clear: () => void;
         contents: {
@@ -32,10 +34,11 @@ export declare const __wrapRequest__: {
 declare type RESULT<$$, DD> = DD extends undefined ? $$ | undefined : DD extends any ? $$ : $$ | DD;
 export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     _$: $;
-    error?: Error;
     state?: WrapRequestState;
     requestParams?: P;
     xhr?: Promise<$>;
+    private internalError?;
+    private internalErrorAccess?;
     private xhrVersion;
     private _metadata?;
     private options;
@@ -46,6 +49,8 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     private getCachedData;
     private checkXhrVersion;
     request(...[params, options]: P extends undefined ? [undefined?, Omit<RequestOptions, 'context'>?] : [P, Omit<RequestOptions, 'context'>?]): Promise<$$>;
+    get error(): Error | undefined;
+    set error(error: Error | undefined);
     get $(): RESULT<$$, DD>;
     /** alias for this.$ */
     get result(): RESULT<$$, DD>;
