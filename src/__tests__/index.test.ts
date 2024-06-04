@@ -1,4 +1,4 @@
-import { wrapRequest, __wrapRequest__ } from '../';
+import { __wrapRequest__, wrapRequest } from '../';
 
 interface Obj {
     id: number;
@@ -828,4 +828,27 @@ test('it should check typescript-types', async () => {
 
     // unfetched pipe
     expect(typeof pipedWrap3.$).toBe('undefined');
+});
+
+test('it should track access of an error', async (done) => {
+    __wrapRequest__.UNHANDLED_ERROR_WARNING = true;
+    __wrapRequest__.UNHANDLED_ERROR_WARNING_TIMEOUT = 0;
+
+    const spy = spyOn(console, 'warn');
+    const error = new Error('Error');
+    const wrap = wrapRequest(async () => {
+        throw error;
+    });
+
+    await wrap.request();
+
+    setTimeout(() => {
+        expect(spy).toHaveBeenCalledWith(
+            "[wrap-request] Threw an error which doesn't seem to be handled in your application.",
+            error,
+            wrap
+        );
+        expect(wrap.error).toBe(error);
+        done();
+    }, 16);
 });

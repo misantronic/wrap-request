@@ -47,6 +47,9 @@ export const __wrapRequestDebug__ = {
 };
 
 export const __wrapRequest__ = {
+    UNHANDLED_ERROR_WARNING: false,
+    UNHANDLED_ERROR_WARNING_TIMEOUT: 8_000,
+
     cache: {
         clear: () => {
             cache = {};
@@ -63,11 +66,12 @@ type RESULT<$$, DD> = DD extends undefined
 
 export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     public _$!: $;
-    public error?: Error;
     public state?: WrapRequestState;
     public requestParams?: P;
     public xhr?: Promise<$>;
 
+    private internalError?: Error;
+    private internalErrorAccess?: ReturnType<typeof setTimeout>;
     private xhrVersion = 0;
     private _metadata?: MD;
     private options: InternalOptions<$, $$, MD, DD> = {};
@@ -137,7 +141,7 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
             : this.getCachedData(params);
 
         this.requestParams = params;
-        this.error = undefined;
+        this.internalError = undefined;
 
         const setFetched = (result: $) => {
             this._$ = result;
@@ -182,6 +186,30 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
         }
 
         return this.$ as $$;
+    }
+
+    public get error(): Error | undefined {
+        if (this.internalErrorAccess !== undefined) {
+            clearTimeout(this.internalErrorAccess);
+
+            this.internalErrorAccess = undefined;
+        }
+
+        return this.internalError;
+    }
+
+    public set error(error: Error | undefined) {
+        if (__wrapRequest__.UNHANDLED_ERROR_WARNING) {
+            this.internalErrorAccess = setTimeout(() => {
+                console.warn(
+                    "[wrap-request] Threw an error which doesn't seem to be handled in your application.",
+                    error,
+                    this
+                );
+            }, __wrapRequest__.UNHANDLED_ERROR_WARNING_TIMEOUT);
+        }
+
+        this.internalError = error;
     }
 
     public get $(): RESULT<$$, DD> {
@@ -247,19 +275,19 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
         empty?(): T;
         error?(e: Error): T;
     }): T | null {
-        if (this.error && handlers.error) {
-            return handlers.error(this.error);
+        if (handlers.error && this.internalError) {
+            return handlers.error(this.error!);
         }
 
-        if (this.empty && handlers.empty) {
+        if (handlers.empty && this.empty) {
             return handlers.empty();
         }
 
-        if (this.loading && handlers.loading) {
+        if (handlers.loading && this.loading) {
             return handlers.loading();
         }
 
-        if (this.fetched && handlers.fetched) {
+        if (handlers.fetched && this.fetched) {
             return handlers.fetched(this.$ as $$);
         }
 
@@ -274,7 +302,7 @@ export class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
         const cacheKey = this.getCacheKey(params);
 
         this._$ = value as $;
-        this.error = undefined;
+        this.internalError = undefined;
         this.xhr = undefined;
         this.requestParams = undefined;
         this.state =

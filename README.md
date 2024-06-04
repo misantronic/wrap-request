@@ -112,6 +112,23 @@ await wrappedXhr.request();
 console.log(wrappedXhr.metadata);
 ```
 
+## error-handling
+
+It is possible to notify the user at runtime that an error triggered in a wrap request has not been handled. This method is deactivated by default and must be opt-in. The notification will be output in the console.
+The default time-limit to show the notification is 8 seconds and can be overwritten via `__wrapRequest__.UNHANDLED_ERROR_WARNING_TIMEOUT`
+
+```js
+import { __wrapRequest__ } from 'wrap-request';
+
+__wrapRequest__.UNHANDLED_ERROR_WARNING = true;
+
+const wrap = wrapRequest(() => {
+    throw new Error('Something wrong');
+});
+
+wrap.request(); // will trigger the notification after 8 seconds as `error` was never accessed
+```
+
 ## streaming
 
 The nature of promises is to resolve data only once. In some cases you need to update resolve multiple times f.e. when working with websockets. Enter streaming.
