@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.2.1](https://github.com/misantronic/wrap-request/compare/v7.2.0...v7.2.1) (2024-06-04)
+
+
+### Bug Fixes
+
+* disable error-handling notification when error is thrown ([9b3a30d](https://github.com/misantronic/wrap-request/commit/9b3a30dbbed5fffd2813a8f378e24f705a06ff8f))
+
 ## [7.2.0](https://github.com/misantronic/wrap-request/compare/v7.0.7...v7.2.0) (2024-06-04)
 
 
