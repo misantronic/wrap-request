@@ -49,6 +49,7 @@ export declare class WrapRequest<$ = any, P = any, $$ = $, MD = any, DD = any> {
     private getCachedData;
     private checkXhrVersion;
     request(...[params, options]: P extends undefined ? [undefined?, Omit<RequestOptions, 'context'>?] : [P, Omit<RequestOptions, 'context'>?]): Promise<$$>;
+    private clearInternalErrorAccess;
     get error(): Error | undefined;
     set error(error: Error | undefined);
     get $(): RESULT<$$, DD>;
