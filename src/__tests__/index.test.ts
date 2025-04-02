@@ -380,6 +380,29 @@ test('it should error with `when` (request-last)', async () => {
     wrap.request();
 });
 
+test('it should set correct state when using `when`', async () => {
+    const wrap = wrapRequest(
+        () =>
+            new Promise<number>((resolve) => setTimeout(() => resolve(1337), 0))
+    );
+
+    const request = wrap.request();
+
+    expect(wrap.loading).toBeTruthy();
+    expect(wrap.fetched).toBeFalsy();
+
+    const xhr = wrap.when();
+
+    expect(wrap.loading).toBeTruthy();
+    expect(wrap.fetched).toBeFalsy();
+
+    await request;
+
+    expect(wrap.loading).toBeFalsy();
+    expect(wrap.fetched).toBeTruthy();
+    expect(await xhr).toEqual(1337);
+});
+
 test('it should always resolve the latest request', async () => {
     const wrap = wrapRequest(async (config: { delay: number }) => {
         return new Promise<number>((resolve, reject) =>
